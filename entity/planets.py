@@ -1,11 +1,11 @@
 import pygame
 from math import pi
-from math import cos,sin
+from math import cos, sin
 from entity.actor import Entity, Drawable
 from misc import YELLOW
 
-class Earth(Entity):
 
+class Earth(Entity):
     health = 0
 
     def __init__(self, instance):
@@ -22,11 +22,11 @@ class Earth(Entity):
     def calculate_position(self):
         x = Assets.EARTH_DISANCE * cos(self.theta) + Assets.SUN_X
         y = Assets.EARTH_DISANCE * sin(self.theta) + Assets.SUN_Y
-        self.position = (x,y)
+        self.position = (x, y)
 
-    def update(self,delta_time):
+    def update(self, delta_time):
         self.theta += Assets.EARTH_ANGLULAR_SPEED * delta_time
-        self.theta = self.theta%(2 *pi)
+        self.theta = self.theta % (2 * pi)
         self.calculate_position()
 
 
@@ -41,8 +41,8 @@ class Sun(Entity):
 
     def create_drawable(self):
         surf = pygame.Surface((self.radius * 2, self.radius * 2))
-        pygame.draw.circle(surf, YELLOW, (self.radius,self.radius),self.radius)
+        pygame.draw.circle(surf, YELLOW, (self.radius, self.radius), self.radius)
         self.drawable = Drawable(surf, self.position, False, True)
 
-    def update(self,delta_time):
+    def update(self, delta_time):
         pass

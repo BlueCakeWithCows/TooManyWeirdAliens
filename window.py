@@ -2,7 +2,6 @@ from entity.actor import Entity
 
 
 class Window:
-
     debug = False
     draw_list = []
     update_list = []
@@ -19,21 +18,21 @@ class Window:
                 i.debug_draw(screen, self.camera.position)
         return
 
-    def update(self,deltaTime):
+    def update(self, deltaTime):
         self.listen(deltaTime)
         for i in self.update_list:
             i.update(deltaTime)
         return
-    #Override below methods
-    def listen(self,deltaTime):
+
+    # Override below methods
+    def listen(self, deltaTime):
         pass
 
-    def pass_event(self,event):
+    def pass_event(self, event):
         pass
 
 
 class Camera(Entity):
-
     def __init__(self, instance, target):
         Entity.__init__(self, instance)
         self.target = target

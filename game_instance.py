@@ -33,12 +33,12 @@ class Instance(Window):
         self.create(self.sun)
         self.create(self.earth_arrow)
         self.create(self.ship)
-        #self.create(VelocityDisplay)
-        #self.create(CoordsDisplay)
+        # self.create(VelocityDisplay)
+        # self.create(CoordsDisplay)
 
-        #self.update_list.append(Enemy_Spawner.Spawner())
+        # self.update_list.append(Enemy_Spawner.Spawner())
 
-        self.create(Goblin(self,(1300, 200), self.earth))
+        self.create(Goblin(self, (1300, 200), self.earth))
 
     def create(self, x):
         if x is not None:
@@ -62,8 +62,3 @@ class Instance(Window):
                 global debug
                 debug = not debug
                 print("Debug Toggle to ", debug)
-
-
-
-
-

@@ -2,9 +2,11 @@ from entity.actor import Entity, Drawable
 import pygame
 from misc import add_polar, min_polar, add_rectangular
 from math import pi, cos, sin
-#Need to replace calls to Assets
-#Need to replace Projectile with a projectile template - ?
-#Need to move check collision code to appropriate place
+
+
+# Need to replace calls to Assets
+# Need to replace Projectile with a projectile template - ?
+# Need to move check collision code to appropriate place
 class SpaceShip(Entity):
     health = 0
     base_image = None
@@ -14,20 +16,20 @@ class SpaceShip(Entity):
     channel = None
     speed = 0
     direction = 0
-    def __init__(self, instance, position = (0,0), template = None):
+
+    def __init__(self, instance, position=(0, 0), template=None):
         Entity.__init__(self, instance)
         self.create_drawable()
         self.position = position
 
         self.health = Assets.SHIP_HEALTH
 
-
     def create_drawable(self):
-        self.drawable = Drawable(Assets.ship_art, (0,0), False, True)
+        self.drawable = Drawable(Assets.ship_art, (0, 0), False, True)
 
     def damage(self, amount):
         self.health = self.health - amount
-        if(self.health<1):
+        if (self.health < 1):
             Assets.player_exploded_sound.play()
         return
 
@@ -42,7 +44,7 @@ class SpaceShip(Entity):
         keys = pygame.key.get_pressed()
         # Possibly better represented as a dictionary or seperate class... whatevs
         self.k_fire = keys[pygame.K_SPACE]
-        self.k_up =  keys[pygame.K_UP] or keys[pygame.K_w]
+        self.k_up = keys[pygame.K_UP] or keys[pygame.K_w]
         self.k_down = keys[pygame.K_DOWN] or keys[pygame.K_s]
         self.k_right = keys[pygame.K_RIGHT]
         self.k_left = keys[pygame.K_LEFT] or keys[pygame.K_a]
@@ -64,7 +66,7 @@ class SpaceShip(Entity):
         if self.k_up:
             delta_v = Assets.PLAYER_ACCELERATION * delta_time, self.direction
 
-        velocity = add_polar(delta_v,velocity)
+        velocity = add_polar(delta_v, velocity)
         velocity = min_polar(velocity, Assets.PLAYER_MAX_SPEED)
 
         self.velocity_polar = velocity()
@@ -74,12 +76,14 @@ class SpaceShip(Entity):
         self.position = add_rectangular(self.position, delta_position)
 
     def redraw_image(self):
-        if self.k_up: image = self.base_image_fire
-        else: image = self.base_image
+        if self.k_up:
+            image = self.base_image_fire
+        else:
+            image = self.base_image
         self.drawable.image = pygame.transform.rotate(image, 180 / pi * self.direction)
         self.drawable.image = self.drawable.image.convert_alpha()
 
-    #Objects will not be responsible for own collisions
+    # Objects will not be responsible for own collisions
     def check_collision(self):
         # if Game.game_instance.earth.check_collision(self.bounding_box,self.direction):
         #     print("Ouch")
@@ -88,14 +92,13 @@ class SpaceShip(Entity):
             print("Ouch")
             self.damage(1000)
 
-
     cooldown = 0
-    def fire(self,delta_time):
+
+    def fire(self, delta_time):
         self.cooldown = self.cooldown - delta_time
-        if(self.cooldown < 0 and self.k_fire):
+        if (self.cooldown < 0 and self.k_fire):
             Assets.player_fire_sound.play()
             self.cooldown = Assets.GUN_COOLDOWN
-            projectile = Projectile(self.position,self.direction,self.speed,self.v_angle, Assets.PLAYER_DAMAGE, Assets.PURPLE, Assets.PLAYER_PROJECTILE_SPEED, Assets.ship_rocket_art)
+            projectile = Projectile(self.position, self.direction, self.speed, self.v_angle, Assets.PLAYER_DAMAGE,
+                                    Assets.PURPLE, Assets.PLAYER_PROJECTILE_SPEED, Assets.ship_rocket_art)
             self.instance.create(projectile)
-
-

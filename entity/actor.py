@@ -1,10 +1,10 @@
 from misc import to_polar, to_rectangular, pythag_distance, GREEN
 from pygame import draw, Rect
 
-#Class should be done 4/24/2017
-#Jk 4/25/2017
-class Entity:
 
+# Class should be done 4/24/2017
+# Jk 4/25/2017
+class Entity:
     drawable = None
     visible = True
     _position = 0, 0
@@ -14,19 +14,19 @@ class Entity:
     health = None
     arrow = None
     instance = None
-    #Position and velocity are initilizaed to 0,0 in order to be more forgiving in execution order, ie create image
-    #then set position vs other way around
-    #Class includes position, velocity, collision (via radius), and health code
-    #Feel free to ignore
 
-    #Note, class includes position and velocity code that can be ignored freely (and basic collision)
-    #Auto calculates velocity polar - Same is not included for position due to infrequent (never?) use
-    #Radius is soley used for debug drawing, may be implemented in sub classes for collisions
+    # Position and velocity are initilizaed to 0,0 in order to be more forgiving in execution order, ie create image
+    # then set position vs other way around
+    # Class includes position, velocity, collision (via radius), and health code
+    # Feel free to ignore
+
+    # Note, class includes position and velocity code that can be ignored freely (and basic collision)
+    # Auto calculates velocity polar - Same is not included for position due to infrequent (never?) use
+    # Radius is soley used for debug drawing, may be implemented in sub classes for collisions
 
     def __init__(self, instance):
         self.instance = instance
         self.create_drawable()
-
 
     def update(self, delta_time):
         pass
@@ -34,9 +34,9 @@ class Entity:
     def create_drawable(self):
         pass
 
-    #Add reference to instance
+    # Add reference to instance
     def destroy(self):
-        if(self.arrow is not None):
+        if (self.arrow is not None):
             self.arrow.destroy()
         pass
 
@@ -54,20 +54,20 @@ class Entity:
 
     def debug_draw(self, screen, offset):
         if self.radius is not None and self.radius > 0:
-            pos = int(self.x - offset[0]), int(self.y-offset[1])
+            pos = int(self.x - offset[0]), int(self.y - offset[1])
             draw.circle(screen, GREEN,
-                               pos, self.radius,    1)
+                        pos, self.radius, 1)
 
     def is_colliding(self, *args):
 
-        #if I ever want to do rectangle collisions :/
+        # if I ever want to do rectangle collisions :/
         if isinstance(args[0], Rect):
             raise ValueError("Wtf, rectangles aren't supported")
             if len(args) == 2:
                 pass
             pass
 
-        #assume point, radius
+        # assume point, radius
         point = args[0]
         radius = args[1]
         if pythag_distance(self.position, point)[0] < self.radius + radius:
@@ -76,7 +76,6 @@ class Entity:
 
     def inform_collision(self, *args):
         pass
-
 
     @property
     def position(self):
@@ -87,12 +86,11 @@ class Entity:
         if len(args) == 1:
             self._position = args[0]
         elif len(args) == 2:
-            self._position = (args[0],args[1])
+            self._position = (args[0], args[1])
         else:
             raise ValueError('Wrong typed passed to position setter. Expected tuple or x and y')
         if self.drawable is not None:
             self.drawable.position = self.position
-
 
     @property
     def x(self):
@@ -101,7 +99,6 @@ class Entity:
     @property
     def y(self):
         return self._position[1]
-
 
     @property
     def velocity(self):
@@ -149,7 +146,6 @@ class Entity:
 
 
 class Drawable:
-
     image = None
     _position = 0, 0
     ignore_offset = False
@@ -161,14 +157,14 @@ class Drawable:
         self.center = draw_from_center
         self.ignore_offset = gui
 
-    def draw(self, screen, camera_offset=(0,0)):
+    def draw(self, screen, camera_offset=(0, 0)):
         if self.ignore_offset:
             x = self.screen_x
             y = self.screen_y
         else:
             x = self.screen_x - camera_offset[0]
             y = self.screen_y - camera_offset[1]
-        screen.blit(self.image, (x,y))
+        screen.blit(self.image, (x, y))
 
     @property
     def position(self):
@@ -183,7 +179,7 @@ class Drawable:
         else:
             raise ValueError('Wrong typed passed to position setter. Expected tuple or x and y')
         if self.draw_from_center:
-            self._position = (self.x-self.image.get_width()/2, self.y - self.image.get_height()/2)
+            self._position = (self.x - self.image.get_width() / 2, self.y - self.image.get_height() / 2)
 
     @property
     def x(self):
@@ -192,4 +188,3 @@ class Drawable:
     @property
     def y(self):
         return self._position[1]
-

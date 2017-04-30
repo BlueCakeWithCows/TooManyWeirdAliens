@@ -5,12 +5,13 @@ from math import cos, sin, pi, floor, ceil
 import pygame
 import random
 
-class Display (Entity):
+
+class Display(Entity):
     text = ""
-    color =  WHITE
+    color = WHITE
     font = None
 
-    def __init__(self, instance, position = (0,0), text="", color= WHITE, font = None, get_text_function = None):
+    def __init__(self, instance, position=(0, 0), text="", color=WHITE, font=None, get_text_function=None):
         Entity.__init__(self, instance)
         self.font = font
         self.text = text
@@ -18,7 +19,6 @@ class Display (Entity):
         self.drawable = Drawable(None, None, True, False)
         self.position = position
         self.get_text_function = get_text_function
-
 
     def update(self, delta_time):
         self.update_text()
@@ -30,7 +30,6 @@ class Display (Entity):
 
 
 class Arrow(Entity):
-
     color = None
     target = None
     scale = 1
@@ -44,13 +43,12 @@ class Arrow(Entity):
         self.base_image = None
         self.create_drawable()
 
-
     def create_base(self):
-        surf = Surface((64,32),pygame.SRCALPHA, 32)
-        pygame.draw.rect(surf, self.color, Rect(0,8,44,16))
-        pygame.draw.polygon(surf, self.color, [(44,0),(64,16),(44,32)])
+        surf = Surface((64, 32), pygame.SRCALPHA, 32)
+        pygame.draw.rect(surf, self.color, Rect(0, 8, 44, 16))
+        pygame.draw.polygon(surf, self.color, [(44, 0), (64, 16), (44, 32)])
         self.base_image = surf.convert_alpha()
-        self.drawable = Drawable(self.base_image.copy(),self.position, True,True)
+        self.drawable = Drawable(self.base_image.copy(), self.position, True, True)
 
     def update_image(self):
         if point_in_view(self.target.x, self.target.y):
@@ -59,31 +57,27 @@ class Arrow(Entity):
 
         self.visible = True
 
-        distance, angle = distance_and_angle((camera_x + Assets.HALF_WIDTH, camera_y + Assets.HEIGHT / 2), (self.target.x, self.target.y))
-
-
+        distance, angle = distance_and_angle((camera_x + Assets.HALF_WIDTH, camera_y + Assets.HEIGHT / 2),
+                                             (self.target.x, self.target.y))
 
         angle = -angle
         co, si = cos(angle), sin(angle)
 
         x_axis = Assets.ARROW_AXIS_LEFT
         if co > 0: x_axis = Assets.ARROW_AXIS_RIGHT
-        x_dist = abs((x_axis-Assets.HALF_WIDTH) * co)
+        x_dist = abs((x_axis - Assets.HALF_WIDTH) * co)
 
         y_axis = Assets.ARROW_AXIS_BOTTOM
         if si > 0:
             y_axis = Assets.ARROW_AXIS_TOP
-        y_dist = abs((y_axis-Assets.HALF_HEIGHT) * si)
+        y_dist = abs((y_axis - Assets.HALF_HEIGHT) * si)
 
-        if(x_dist > y_dist):
+        if (x_dist > y_dist):
             new_x = x_axis
-            new_y = abs(x_axis-Assets.HALF_WIDTH) * -1*si + Assets.HALF_HEIGHT
+            new_y = abs(x_axis - Assets.HALF_WIDTH) * -1 * si + Assets.HALF_HEIGHT
         else:
             new_y = y_axis
             new_x = abs(y_axis - Assets.HALF_HEIGHT) * co + Assets.HALF_WIDTH
-
-
-
 
         if new_x > Assets.ARROW_AXIS_RIGHT: new_x = Assets.ARROW_AXIS_RIGHT
         if new_x < Assets.ARROW_AXIS_LEFT: new_x = Assets.ARROW_AXIS_LEFT
@@ -96,17 +90,16 @@ class Arrow(Entity):
 
         image = self.base_image.copy()
 
-        if(co < 0):
-            image.blit(pygame.transform.rotate(label,180),(10,6))
+        if (co < 0):
+            image.blit(pygame.transform.rotate(label, 180), (10, 6))
         else:
             image.blit(label, (10, 6))
-        size =(int(64*self.scale),int(32*self.scale))
-        self.drawable.image = pygame.transform.rotate(pygame.transform.scale(image,size),angle * 180 / (pi))
+        size = (int(64 * self.scale), int(32 * self.scale))
+        self.drawable.image = pygame.transform.rotate(pygame.transform.scale(image, size), angle * 180 / (pi))
         self.drawable.image.convert()
-        #Add a catch statement for non square
+        # Add a catch statement for non square
 
-
-    def update(self,delta_time):
+    def update(self, delta_time):
         self.update_image()
 
 

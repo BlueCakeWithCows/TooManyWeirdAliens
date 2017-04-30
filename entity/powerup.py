@@ -22,7 +22,6 @@ class PowerUp(Entity):
 
 
 class HealthPack(PowerUp):
-
     def create_drawable(self):
         self.drawable = Drawable(Assets.heart_art, self.position, False, True)
 
@@ -32,7 +31,6 @@ class HealthPack(PowerUp):
 
 
 class EarthHealPack(PowerUp):
-
     def create_drawable(self):
         self.drawable = Drawable(Assets.repair_earth_art, self.position, False, True)
 
