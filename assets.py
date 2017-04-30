@@ -1,14 +1,55 @@
 import os, sys
 from configparser import ConfigParser
 from itertools import chain
+import pygame
 
 _config_path= "data/configs/"
+_assets_path= "data/assets/"
+_assets_config_path = _assets_path + "settings.cfg"
+
 _properties = {}
+texture = {}
+sound = {}
+music = {}
+pygame.init()
+screen= pygame.display.set_mode((300,300), False)
 
 
-from configparser import ConfigParser
-from itertools import chain
+def _image(name, options):
+    path = get_path(_assets_path + options["url"])
+    image = pygame.image.load(path).convert_alpha()
+    if "width" in options:
+        width = convert(options["width"])
+        height = convert(options ["height"])
+        image = pygame.transform.scale(image, (width,height))
+    if "rotation" in options:
+        image = pygame.transform.rotate(image, convert(options["rotation"]))
+    texture[name]=image
 
+
+def _sound_effect(name, options):
+    path = get_path(_assets_path + options["url"])
+    effect = pygame.mixer.Sound(path)
+    sound[name] = effect
+
+
+def _music(name, options):
+    path = get_path(_assets_path + options["url"])
+    music[name] = path
+
+# map the inputs to the function blocks
+_assets_switch = {"music": _music, "image": _image, "sound": _sound_effect}
+
+def load_assets():
+    config_directory = get_path(_config_path)
+    config = ConfigParser()
+    config.read(get_path(_assets_config_path))
+
+    for section in config.sections():
+        _assets_switch[config.get(section, "type")](section, dict(config.items(section)))
+    print(music)
+    print(texture)
+    print(sound)
 
 def load_configs():
     config_directory = get_path(_config_path)
@@ -41,6 +82,7 @@ def get_path(relative):
 def value(key):
     return _properties[key]
 
+
 def convert(val):
     constructors = [int, float, str]
     for c in constructors:
@@ -49,4 +91,4 @@ def convert(val):
         except ValueError:
             pass
 
-load_configs()
+load_assets()
