@@ -13,7 +13,7 @@ class PowerUp(Entity):
     def __init__(self, instance, position):
         Entity.__init__(self, instance)
         self.position = position
-        self.arrow = Arrow(self, PURPLE, 1)
+        self.arrow = Arrow(self, self.instance, PURPLE, 1)
         self.instance.create(self.arrow)
 
     def inform_collision(self, **kwargs):

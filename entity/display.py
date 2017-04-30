@@ -1,5 +1,5 @@
 from entity.actor import Entity, Drawable
-from misc import WHITE, distance_and_angle, distance
+from misc import WHITE, distance_and_angle, pythag_distance
 from pygame import Surface, Rect
 from math import cos, sin, pi, floor, ceil
 import pygame
@@ -12,6 +12,7 @@ class Display (Entity):
 
     def __init__(self, instance, position = (0,0), text="", color= WHITE, font = None, get_text_function = None):
         Entity.__init__(self, instance)
+        self.font = font
         self.text = text
         self.color = color
         self.drawable = Drawable(None, None, True, False)
@@ -48,9 +49,8 @@ class Arrow(Entity):
         surf = Surface((64,32),pygame.SRCALPHA, 32)
         pygame.draw.rect(surf, self.color, Rect(0,8,44,16))
         pygame.draw.polygon(surf, self.color, [(44,0),(64,16),(44,32)])
-        surf.convert()
-        self.base_image = surf
-        self.drawable = Drawable(self.base_image.copy(),0,0,True,True)
+        self.base_image = surf.convert_alpha()
+        self.drawable = Drawable(self.base_image.copy(),self.position, True,True)
 
     def update_image(self):
         if point_in_view(self.target.x, self.target.y):
@@ -64,7 +64,6 @@ class Arrow(Entity):
 
 
         angle = -angle
-        new_x, new_y = 0,0
         co, si = cos(angle), sin(angle)
 
         x_axis = Assets.ARROW_AXIS_LEFT
@@ -91,10 +90,9 @@ class Arrow(Entity):
         if new_y < Assets.ARROW_AXIS_TOP: new_y = Assets.ARROW_AXIS_TOP
         if new_y > Assets.ARROW_AXIS_BOTTOM: new_y = Assets.ARROW_AXIS_BOTTOM
 
-        self.x, self.y = new_x,new_y
-        self.update_position()
+        self.position = new_x, new_y
         string = str(int(distance))
-        label = Assets.arrow_font.render(string, 1, Assets.BLACK)
+        label = Assets.arrow_font.render(string, 1, BLACK)
 
         image = self.base_image.copy()
 

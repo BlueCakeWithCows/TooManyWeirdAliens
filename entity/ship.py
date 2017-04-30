@@ -34,7 +34,7 @@ class SpaceShip(Entity):
     def update(self, delta_time):
         self.get_key_inputs()
         self.calculate_new_velocity(delta_time)
-        self.calculate_new_position()
+        self.calculate_new_position(delta_time)
         self.redraw_image()
         self.fire(delta_time)
 

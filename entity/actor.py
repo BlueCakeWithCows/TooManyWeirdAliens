@@ -1,4 +1,4 @@
-from misc import to_polar, to_rectangular, distance, GREEN
+from misc import to_polar, to_rectangular, pythag_distance, GREEN
 from pygame import draw, Rect
 
 #Class should be done 4/24/2017
@@ -48,13 +48,13 @@ class Entity:
     def on_health_below_zero_event(self):
         pass
 
-    def draw(self, screen):
+    def draw(self, screen, offset):
         if self.drawable is not None and self.visible == True:
-            self.drawable.draw(screen)
+            self.drawable.draw(screen, offset)
 
-    def debug_draw(self, screen):
+    def debug_draw(self, screen, offset):
         if self.radius is not None and self.radius > 0:
-            pos = int(self.x - self.get_camera_x()), int(self.y-self.get_camera_y())
+            pos = int(self.x - offset[0]), int(self.y-offset[1])
             draw.circle(screen, GREEN,
                                pos, self.radius,    1)
 
@@ -70,7 +70,7 @@ class Entity:
         #assume point, radius
         point = args[0]
         radius = args[1]
-        if distance(self.position,point)[0] < self.radius + radius:
+        if pythag_distance(self.position, point)[0] < self.radius + radius:
             return True
         return False
 

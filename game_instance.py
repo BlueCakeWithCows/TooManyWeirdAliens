@@ -7,6 +7,10 @@ from entity.enemy import Goblin
 import pygame
 from math import pi
 from misc import GREEN
+
+debug = False
+
+
 class Instance(Window):
     day = 0
     earth = None
@@ -22,9 +26,9 @@ class Instance(Window):
         self.earth = Earth(self)
         self.sun = Sun(self)
         self.earth_arrow = Arrow(self, self.earth, GREEN, 1)
-        self.ship = SpaceShip()
+        self.ship = SpaceShip(self)
         self.camera.target = self.ship
-        self.create(StarrySky())
+        self.create(StarrySky(self))
         self.create(self.earth)
         self.create(self.sun)
         self.create(self.earth_arrow)

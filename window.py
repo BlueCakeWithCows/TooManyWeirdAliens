@@ -38,6 +38,6 @@ class Camera(Entity):
         Entity.__init__(self, instance)
         self.target = target
 
-    def update(self):
+    def update(self, delta_time):
         if self.target is not None:
             self.position = self.target.position()

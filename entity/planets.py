@@ -42,8 +42,7 @@ class Sun(Entity):
     def create_drawable(self):
         surf = pygame.Surface((self.radius * 2, self.radius * 2))
         pygame.draw.circle(surf, YELLOW, (self.radius,self.radius),self.radius)
-        surf.convert()
-        self.drawable = Drawable(surf, self.x, self.y, False, True)
+        self.drawable = Drawable(surf, self.position, False, True)
 
     def update(self,delta_time):
         pass

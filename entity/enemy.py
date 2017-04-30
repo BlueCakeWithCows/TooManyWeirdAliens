@@ -1,19 +1,23 @@
 from entity.actor import Entity, Drawable
 import random
-from misc import distance_and_angle, add_rectangular, to_rectangular, to_polar, distance, RED
-from math import pi
+from misc import distance_and_angle, add_rectangular, to_rectangular, to_polar, pythag_distance, RED
+from math import pi, sin, cos
 import pygame
+from assets import property
 from entity.display import Arrow
+
 
 class Enemy(Entity):
     health = 1
     behavior = None
     image = None
     facing_direction = 0
+    speed = 0
+    hyper_speed = 0
 
     def __init__(self, instance):
         Entity.__init__(self, instance)
-        self.arrow = Arrow(self, RED, 1)
+        self.arrow = Arrow(self, instance, RED, 1)
         self.instance.create(self.arrow)
 
     #Collision code should be handled in another class
@@ -24,22 +28,30 @@ class Enemy(Entity):
             self.damage(100)
 
     def on_health_below_zero_event(self):
-        self.destroy
+        self.destroy()
 
     def update_image(self):
         self.drawable.image = pygame.transform.rotate(self.image, self.facing_direction * -180/pi)
 
 
 class Goblin(Enemy):
-    target = None
-    direction = 0
+    
+    hyper_speed = property("enemy.goblin_hyper_speed")
+    speed = property("enemy.goblin_speed")
+    health = property("enemy.goblin_health")
+    radius = property("enemy.goblin_radius")
+    orbit_distance = property("enemy.goblin_orbit_distance")
+    hyper_speed_range = property("enemy.goblin_hyper_speed_range")
+    rotation_speed = property("enemy.goblin_rotation_speed")
+    weapon_speed = property("enemy.goblin_weapon_speed")
+    weapon_damage = property("enemy.goblin_weapon_damage")
+    weapon_velocity = property("enemy.goblin_weapon_velocity")
 
     def __init__(self, instance, position, target):
         Enemy.__init__(self, instance)
         self.target = target
         self.position = position
         self.direction = random.choice([-1,1])
-        self.radius = 24
         self.mode = "SEARCH"
 
 
@@ -55,32 +67,33 @@ class Goblin(Enemy):
         distance, angle = distance_and_angle(self.position, self.target)
         self.facing_direction = angle
 
-        if(distance>1200): speed = HYPER_SPEED
-        else: speed = SPEED
+        if(distance>self.hyper_speed_range): speed = self.hyper_speed
+        else: speed = self.speed
+        if distance < self.orbit_distance: self.mode = "DESTROY"
 
-        self.velocity_polar = speed, facing_direction
+        self.velocity_polar = speed, self.facing_direction
         speed = speed * delta_time
-        self.position = add_rectangular(to_rectangular(speed, facing_direction))
+        self.position = add_rectangular(to_rectangular(speed, self.facing_direction))
 
     timer = 0
     def destroy_mode(self, delta_time):
-        self.facing_direction = self.facing_direction + self.direction * Assets.ENEMY_GOBLIN_ROTATION_SPEED * delta_time
+        self.facing_direction = self.facing_direction + self.direction * self.rotation_speed * delta_time
 
-        new_x, new_y = -cos(self.facing_direction) * 200 + self.target.x, -sin(self.facing_direction) * 200 + self.target.y
+        new_x, new_y = -cos(self.facing_direction) * self.orbit_distance + self.target.x, -sin(self.facing_direction) * self.orbit_distance + self.target.y
         self.velocity = (new_x - self.x) / delta_time, (new_y - self.y) / delta_time
         self.position = new_x, new_y
-        self.fire()
+        self.fire(delta_time)
 
         pass
 
     def fire(self, delta_time):
         self.timer = self.timer - delta_time
         if (self.timer < 0):
-            self.timer = Assets.ENEMY_GOBLIN_DROP_SPEED
+            self.timer = self.weapon_speed
             sp, an = to_polar(self.v_x, -self.v_y)
             projectile = Enemy_Projectile(self.position, -(self.angle + pi / 8 * self.direction), sp, an,
-                                          Assets.ENEMY_GOBLIN_DROP_DAMAGE, Assets.RED,
-                                          Assets.ENEMY_GOBLIN_PROJECTILE_SPEED, Assets.goblin_bomb_art)
+                                          self.weapon_damage, RED,
+                                          self.weapon_velocity, Assets.goblin_bomb_art)
             self.instance.create(projectile)
 
 
@@ -90,16 +103,19 @@ class Goblin(Enemy):
 
 
 class Hunter(Enemy):
-    target = None
-    arrow = None
+    hyper_speed = property("enemy.hunter_hyper_speed")
+    speed = property("enemy.hunter_speed")
+    health = property("enemy.hunter_health")
+    radius = property("enemy.hunter_radius")
+    weapon_speed = property("enemy.hunter_weapon_speed")
+    weapon_damage = property("enemy.hunter_weapon_damage")
+    weapon_velocity = property("enemy.hunter_weapon_velocity")
+    hyper_speed_range = property("enemy.hunter_hyper_speed_range")
 
     def __init__(self, instance, position, target):
         Enemy.__init__(self, instance)
         self.target = target
         self.position = position
-
-        self.health = Assets.ENEMY_HUNTER_HEALTH
-        self.radius = 24
         self.mode = "SEARCH"
 
     def create_drawable(self):
@@ -108,36 +124,36 @@ class Hunter(Enemy):
     timer = 0
     def update(self, delta_time):
         self.timer = self.timer - delta_time
-        if (self.mode == "SEARCH"):
+        if self.mode == "SEARCH":
             self.search_mode(delta_time)
-        elif (self.mode == "DESTROY"):
+        elif self.mode == "DESTROY":
             self.destroy_mode(delta_time)
         self.update_image()
 
     def search_mode(self, delta_time):
         distance, angle = distance_and_angle(self.position, self.target.position)
         self.facing_direction = angle
-        speed = Assets.ENEMY_HUNTER_SPEED
+        speed = self.speed
+
+        if distance > 1000: speed = self.hyper_speed
+        if distance < 200: self.mode = "DESTROY"
+        if distance < 400: self.tri_fire()
 
         self.velocity_polar = speed, angle
         self.position = self.x + self.v_x * delta_time, self.y + self.v_y * delta_time
 
-        if distance > 1000: speed = Assets.ENEMY_HUNTER_HYPER_SPEED
-        if distance < 200: self.mode = "DESTROY"
-        if distance < 400: self.tri_fire()
-
     def destroy_mode(self, delta_time):
-        speed = min(Assets.ENEMY_HUNTER_SPEED, self.target.speed)
+        speed = min(self.speed, self.target.speed)
         self.velocity = speed, self.target.polar_velocity[1]
         self.position = self.x + self.v_x * delta_time, self.y + self.v_y * delta_time
         self.tri_fire()
-        if (distance(self.target.position, self.position) > 800):
-            mode = "SEARCH"
+        if (pythag_distance(self.target.position, self.position) > 800):
+            self.mode = "SEARCH"
         pass
 
     def tri_fire(self):
         if(self.timer < 0):
-            self.timer = Assets.ENEMY_HUNTER_WEAPON_SPEED
+            self.timer = self.weapon_speed
             distance, direction = distance_and_angle(self.position, self.target.position)
             self.fire(direction + pi / 8)
             self.fire(direction - pi / 8)
@@ -147,10 +163,23 @@ class Hunter(Enemy):
     def fire(self,angle):
         sp, an = self.velocity
         projectile = Enemy_Projectile(self.position,-angle , sp, an,
-                                      Assets.ENEMY_HUNTER_DAMAGE, Assets.RED, Assets.ENEMY_HUNTER_PROJECTILE_SPEED, Assets.hunter_rocket_art,.5)
+                                    self.weapon_damage, Assets.RED, self.weapon_velocity, Assets.hunter_rocket_art,.5)
         self.instance.create(projectile)
 
-def Bombarder(Goblin):
+
+class Bombarder(Goblin):
+    hyper_speed = property("enemy.bombarder_hyper_speed")
+    speed = property("enemy.bombarder_speed")
+    health = property("enemy.bombarder_health")
+    radius = property("enemy.bombarder_radius")
+    orbit_distance = property("enemy.bombarder_orbit_distance")
+    hyper_speed_range = property("enemy.bombarder_hyper_speed_range")
+    rotation_speed = property("enemy.bombarder_rotation_speed")
+    weapon_speed = property("enemy.bombarder_weapon_speed")
+    weapon_damage = property("enemy.bombarder_weapon_damage")
+    weapon_velocity = property("enemy.bombarder_weapon_velocity")
+    weapon_duration = property("enemy.weapon_duration")
+
     def __init(self, instance, position, target):
         Goblin.__init__(self, instance, position, target)
         self.radius = 48
@@ -163,11 +192,12 @@ def Bombarder(Goblin):
     def fire(self, delta_time):
         self.timer = self.timer - delta_time
         if(self.timer<0):
+            self.timer = self.weapon_speed
             angle = -pi / 4
             for i in range(10):
                 sp, an = self.velocity_polar
                 projectile = Enemy_Projectile(self.position, -(self.angle + angle + pi / 8 * self.direction), sp, an,
-                                              Assets.ENEMY_BOMBARDER_WEAPON_DAMAGE, Assets.RED,
-                                              Assets.ENEMY_BOMBARDER_PROJECTILE_SPEED, Assets.bombarder_bomb_art, .5)
-                projectile.timer = Assets.ENEMY_BOMBARDER_PROJECTILE_DURATION
-                instance.create(projectile)
+                                              self.weapon_damage, Assets.RED,
+                                              self.weapon_velocity, Assets.bombarder_bomb_art, .5)
+                projectile.timer = self.weapon_duration
+                self.instance.create(projectile)

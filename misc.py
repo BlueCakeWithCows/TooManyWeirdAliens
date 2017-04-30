@@ -20,7 +20,7 @@ def distance_and_angle(a, b):
     return dist, angle
 
 
-def distance(a,b):
+def pythag_distance(a, b):
     dy = b[1] - a[1]
     dx = b[0] - a[0]
     return sqrt(dx ** 2 + dy ** 2)
