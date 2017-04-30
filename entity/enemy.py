@@ -3,7 +3,7 @@ import random
 from misc import distance_and_angle, add_rectangular, to_rectangular, to_polar, pythag_distance, RED
 from math import pi, sin, cos
 import pygame
-from assets import property
+from assets import value
 from entity.display import Arrow
 
 
@@ -36,16 +36,16 @@ class Enemy(Entity):
 
 class Goblin(Enemy):
     
-    hyper_speed = property("enemy.goblin_hyper_speed")
-    speed = property("enemy.goblin_speed")
-    health = property("enemy.goblin_health")
-    radius = property("enemy.goblin_radius")
-    orbit_distance = property("enemy.goblin_orbit_distance")
-    hyper_speed_range = property("enemy.goblin_hyper_speed_range")
-    rotation_speed = property("enemy.goblin_rotation_speed")
-    weapon_speed = property("enemy.goblin_weapon_speed")
-    weapon_damage = property("enemy.goblin_weapon_damage")
-    weapon_velocity = property("enemy.goblin_weapon_velocity")
+    hyper_speed = value("enemy.goblin_hyper_speed")
+    speed = value("enemy.goblin_speed")
+    health = value("enemy.goblin_health")
+    radius = value("enemy.goblin_radius")
+    orbit_distance = value("enemy.goblin_orbit_distance")
+    hyper_speed_range = value("enemy.goblin_hyper_speed_range")
+    rotation_speed = value("enemy.goblin_rotation_speed")
+    weapon_speed = value("enemy.goblin_weapon_speed")
+    weapon_damage = value("enemy.goblin_weapon_damage")
+    weapon_velocity = value("enemy.goblin_weapon_velocity")
 
     def __init__(self, instance, position, target):
         Enemy.__init__(self, instance)
@@ -103,14 +103,14 @@ class Goblin(Enemy):
 
 
 class Hunter(Enemy):
-    hyper_speed = property("enemy.hunter_hyper_speed")
-    speed = property("enemy.hunter_speed")
-    health = property("enemy.hunter_health")
-    radius = property("enemy.hunter_radius")
-    weapon_speed = property("enemy.hunter_weapon_speed")
-    weapon_damage = property("enemy.hunter_weapon_damage")
-    weapon_velocity = property("enemy.hunter_weapon_velocity")
-    hyper_speed_range = property("enemy.hunter_hyper_speed_range")
+    hyper_speed = value("enemy.hunter_hyper_speed")
+    speed = value("enemy.hunter_speed")
+    health = value("enemy.hunter_health")
+    radius = value("enemy.hunter_radius")
+    weapon_speed = value("enemy.hunter_weapon_speed")
+    weapon_damage = value("enemy.hunter_weapon_damage")
+    weapon_velocity = value("enemy.hunter_weapon_velocity")
+    hyper_speed_range = value("enemy.hunter_hyper_speed_range")
 
     def __init__(self, instance, position, target):
         Enemy.__init__(self, instance)
@@ -168,17 +168,17 @@ class Hunter(Enemy):
 
 
 class Bombarder(Goblin):
-    hyper_speed = property("enemy.bombarder_hyper_speed")
-    speed = property("enemy.bombarder_speed")
-    health = property("enemy.bombarder_health")
-    radius = property("enemy.bombarder_radius")
-    orbit_distance = property("enemy.bombarder_orbit_distance")
-    hyper_speed_range = property("enemy.bombarder_hyper_speed_range")
-    rotation_speed = property("enemy.bombarder_rotation_speed")
-    weapon_speed = property("enemy.bombarder_weapon_speed")
-    weapon_damage = property("enemy.bombarder_weapon_damage")
-    weapon_velocity = property("enemy.bombarder_weapon_velocity")
-    weapon_duration = property("enemy.weapon_duration")
+    hyper_speed = value("enemy.bombarder_hyper_speed")
+    speed = value("enemy.bombarder_speed")
+    health = value("enemy.bombarder_health")
+    radius = value("enemy.bombarder_radius")
+    orbit_distance = value("enemy.bombarder_orbit_distance")
+    hyper_speed_range = value("enemy.bombarder_hyper_speed_range")
+    rotation_speed = value("enemy.bombarder_rotation_speed")
+    weapon_speed = value("enemy.bombarder_weapon_speed")
+    weapon_damage = value("enemy.bombarder_weapon_damage")
+    weapon_velocity = value("enemy.bombarder_weapon_velocity")
+    weapon_duration = value("enemy.weapon_duration")
 
     def __init(self, instance, position, target):
         Goblin.__init__(self, instance, position, target)
