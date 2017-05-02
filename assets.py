@@ -11,6 +11,7 @@ value = {}
 texture = {}
 sound = {}
 music = {}
+font = {}
 
 
 def _image(name, options):
