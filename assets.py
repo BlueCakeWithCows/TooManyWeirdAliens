@@ -1,5 +1,7 @@
-import os, sys
+import os
+import sys
 from configparser import ConfigParser
+
 import pygame
 
 _config_path = "data/configs/"
@@ -41,7 +43,7 @@ _assets_switch = {"music": _music, "image": _image, "sound": _sound_effect}
 
 
 def load_assets():
-    config = ConfigParser()
+    config = ConfigParser(strict=True)
     config.read(get_path(_assets_config_path))
 
     for section in config.sections():
@@ -66,8 +68,8 @@ def load_configs():
 
 
 def list_dir(path):
-    list = os.listdir(path)
-    return list
+    dir_list = os.listdir(path)
+    return dir_list
 
 
 def get_path(relative):
