@@ -37,10 +37,10 @@ class Arrow(Entity):
     target = None
     scale = 1
 
-    ARROW_AXIS_LEFT = value["left_axis"]
-    ARROW_AXIS_BOTTOM = value["bottom_axis"]
-    ARROW_AXIS_RIGHT = value["right_axis"]
-    ARROW_AXIS_TOP = value["top_axis"]
+    ARROW_AXIS_LEFT = value["arrow.left_axis"]
+    ARROW_AXIS_BOTTOM = value["arrow.bottom_axis"]
+    ARROW_AXIS_RIGHT = value["arrow.right_axis"]
+    ARROW_AXIS_TOP = value["arrow.top_axis"]
     my_font = font["arrow_font"]
     camera = None
 
