@@ -1,12 +1,11 @@
 import os, sys
 from configparser import ConfigParser
-from itertools import chain
 import pygame
 
 _config_path = "data/configs/"
 _assets_path = "data/assets/"
 _assets_config_path = _assets_path + "settings.cfg"
-
+os.chdir(os.path.dirname(__file__))
 value = {}
 texture = {}
 sound = {}
