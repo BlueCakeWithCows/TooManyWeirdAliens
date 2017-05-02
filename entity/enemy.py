@@ -3,7 +3,7 @@ import random
 from misc import distance_and_angle, add_rectangular, to_rectangular, to_polar, pythag_distance, RED
 from math import pi, sin, cos
 import pygame
-from assets import value
+from assets import value, texture
 from entity.display import Arrow
 
 
@@ -19,13 +19,6 @@ class Enemy(Entity):
         Entity.__init__(self, instance)
         self.arrow = Arrow(self, instance, RED, 1)
         self.instance.create(self.arrow)
-
-    # Collision code should be handled in another class
-    def collision(self):
-        if self.check_collision(Game.game_instance.ship.bounding_box, Game.game_instance.ship.direction):
-            Game.game_instance.ship.damage(20)
-            Assets.crashing_sound.play()
-            self.damage(100)
 
     def on_health_below_zero_event(self):
         self.destroy()
@@ -54,7 +47,7 @@ class Goblin(Enemy):
         self.mode = "SEARCH"
 
     def create_drawable(self):
-        self.drawable = Drawable(Assets.goblin_art, None, False, True)
+        self.drawable = Drawable(texture["goblin"], None, False, True)
 
     def update(self, delta_time):
         if (self.mode == "SEARCH"):
@@ -122,7 +115,7 @@ class Hunter(Enemy):
         self.mode = "SEARCH"
 
     def create_drawable(self):
-        self.drawable = Drawable(Assets.hunter_art, None, False, True)
+        self.drawable = Drawable(texture["hunter"], None, False, True)
 
     timer = 0
 
@@ -189,7 +182,7 @@ class Bombarder(Goblin):
         self.radius = 48
 
     def create_drawable(self):
-        self.drawable = Drawable(Assets.goblin_art, None, False, True)
+        self.drawable = Drawable(texture["bombarder"], None, False, True)
 
     timer = 0
 
