@@ -1,4 +1,4 @@
-from misc import to_polar, to_rectangular, pythag_distance, GREEN
+from misc import to_polar, to_rectangular, pythag_distance, GREEN, add_rectangular, scale_rectangular
 from pygame import draw, Rect
 
 
@@ -29,7 +29,8 @@ class Entity:
         self.create_drawable()
 
     def update(self, delta_time):
-        pass
+        if self.position is not None and self.velocity is not None:
+            self.position = add_rectangular(self.position,scale_rectangular(self.velocity,delta_time))
 
     def create_drawable(self):
         pass

@@ -6,6 +6,9 @@ def to_polar(a, b=None):
         a, b = a[0], a[1]
     return distance_and_angle((0, 0), (a, b))
 
+def scale_rectangular(a,scale):
+    return (a[0]*scale,a[1]*scale)
+
 
 def distance_and_angle(a, b):
     dy = b[1] - a[1]
