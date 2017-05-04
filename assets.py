@@ -38,8 +38,13 @@ def _music(name, options):
     music[name] = path
 
 
+def _font(name, options):
+    font_name = options["name"]
+    size = convert(options["size"])
+    font[name]=pygame.font.SysFont(font_name, size)
+
 # map the inputs to the function blocks
-_assets_switch = {"music": _music, "image": _image, "sound": _sound_effect}
+_assets_switch = {"music": _music, "image": _image, "sound": _sound_effect, "font": _font}
 
 
 def load_assets():
@@ -51,6 +56,7 @@ def load_assets():
     print(music)
     print(texture)
     print(sound)
+    print(font)
 
 
 def load_configs():

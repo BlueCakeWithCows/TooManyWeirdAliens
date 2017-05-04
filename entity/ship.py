@@ -1,7 +1,12 @@
-from entity.actor import Entity, Drawable
+import copy
+from math import pi
+
 import pygame
+
+from assets import value, texture, sound
+from entity.actor import Entity, Drawable
+from entity.projectile import Projectile
 from misc import add_polar, min_polar, add_rectangular
-from math import pi, cos, sin
 
 
 # Need to replace calls to Assets
@@ -11,8 +16,7 @@ class SpaceShip(Entity):
     health = 0
     base_image = None
     base_image_fire = None
-    base_image_slow = None
-    radius = 15
+    radius = value["ship.radius"]
     channel = None
     speed = 0
     direction = 0
@@ -21,17 +25,29 @@ class SpaceShip(Entity):
         Entity.__init__(self, instance)
         self.create_drawable()
         self.position = position
-
-        self.health = Assets.SHIP_HEALTH
+        self.health = value["ship.health"]
+        self.base_image = texture["ship"]
+        self.base_image_fire = texture["ship_fire"]
+        self.deacceleration = value["ship.deacceleration"]
+        self.auto_deacceleration = value["ship.auto_deacceleration"]
+        self.angular_speed = value["ship.rotation_speed"]
+        self.acceleration = value["ship.acceleration"]
+        self.max_speed = value["ship.max_speed"]
+        self.fire_sound = sound["player_fire_sound"]
+        self.fire_speed = value["ship.fire_speed"]
+        self.projectile = Projectile(instance, None, None, None)
+        self.projectile.image = texture["bottle_rocket"]
+        self.projectile.sound = sound["earth_hit"]
+        self.projectile.damage = value["ship.weapon_damage"]
+        self.projectile.speed = value["ship.weapon_speed"]
+        self.weapon_velocity = value["ship.weapon_velocity"]
 
     def create_drawable(self):
-        self.drawable = Drawable(Assets.ship_art, (0, 0), False, True)
+        self.drawable = Drawable(texture["ship"], (0, 0), False, True)
 
-    def damage(self, amount):
-        self.health = self.health - amount
-        if (self.health < 1):
-            Assets.player_exploded_sound.play()
-        return
+
+    def on_health_below_zero_event(self):
+        pass
 
     def update(self, delta_time):
         self.get_key_inputs()
@@ -54,20 +70,20 @@ class SpaceShip(Entity):
         current_v, current_v_angle = self.velocity_polar
 
         if self.k_down:
-            velocity = max(current_v - Assets.PLAYER_DEACCELERATION * delta_time, 0), current_v_angle
+            velocity = max(current_v - self.deacceleration * delta_time, 0), current_v_angle
         else:
-            velocity = max(current_v - Assets.PLAYER_AUTO_DEACCELERATION * delta_time, 0), current_v_angle
+            velocity = max(current_v - self.auto_deacceleration * delta_time, 0), current_v_angle
 
         if self.k_left:
-            self.direction += delta_time * Assets.PLAYER_ANGULAR_SPEED
+            self.direction += delta_time * self.angular_speed
         if self.k_right:
-            self.direction -= delta_time * Assets.PLAYER_ANGULAR_SPEED
+            self.direction -= delta_time * self.angular_speed
 
         if self.k_up:
-            delta_v = Assets.PLAYER_ACCELERATION * delta_time, self.direction
+            delta_v = self.acceleration * delta_time, self.direction
 
         velocity = add_polar(delta_v, velocity)
-        velocity = min_polar(velocity, Assets.PLAYER_MAX_SPEED)
+        velocity = min_polar(velocity, self.max_speed)
 
         self.velocity_polar = velocity()
 
@@ -83,22 +99,14 @@ class SpaceShip(Entity):
         self.drawable.image = pygame.transform.rotate(image, 180 / pi * self.direction)
         self.drawable.image = self.drawable.image.convert_alpha()
 
-    # Objects will not be responsible for own collisions
-    def check_collision(self):
-        # if Game.game_instance.earth.check_collision(self.bounding_box,self.direction):
-        #     print("Ouch")
-        #     self.damage(1000)
-        if Game.game_instance.sun.check_collision(self.bounding_box, self.direction):
-            print("Ouch")
-            self.damage(1000)
-
     cooldown = 0
 
     def fire(self, delta_time):
         self.cooldown = self.cooldown - delta_time
         if (self.cooldown < 0 and self.k_fire):
-            Assets.player_fire_sound.play()
-            self.cooldown = Assets.GUN_COOLDOWN
-            projectile = Projectile(self.position, self.direction, self.speed, self.v_angle, Assets.PLAYER_DAMAGE,
-                                    Assets.PURPLE, Assets.PLAYER_PROJECTILE_SPEED, Assets.ship_rocket_art)
-            self.instance.create(projectile)
+            self.fire_sound.play()
+            self.cooldown = self.fire_speed
+            p = copy.copy(self.projectile)
+            p.velocity_polar = add_polar(self.velocity_polar, (self.weapon_velocity, self.direction))
+            p.rotation = self.direction
+            self.instance.create(p)

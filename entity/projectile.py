@@ -1,13 +1,11 @@
-from entity.actor import Entity, Drawable
-from entity.ship import SpaceShip
-from misc import PURPLE
+from entity.actor import Entity
 from assets import texture, sound, value
 import pygame
 
 
 class Projectile(Entity):
     health = 1
-    damage= 10
+    damage = 10
     sound = None
     image = None
 
@@ -26,12 +24,18 @@ class Projectile(Entity):
             self.drawable.image = pygame.transform.rotate(self.image, self.rotation)
             self._current_rotation = self.rotation
 
-    def inform_collision(self, **kwargs):
-        if isinstance(kwargs["obj2"], SpaceShip):
-            kwargs["obj2"].damage()
-            self.destroy()
-
-    def pickup_event(self, ship):
-        pass
+    # def inform_collision(self, **kwargs):
+    #     if isinstance(kwargs["obj2"], SpaceShip):
+    #         kwargs["obj2"].damage()
+    #         self.destroy()
+    #         sound.play()
+    #     if isinstance(kwargs["obj2"], Enemy):
+    #         kwargs["obj2"].damage()
+    #         self.destroy()
+    #         sound.play()
+    #     if isinstance(kwargs["obj2"], Earth):
+    #         kwargs["obj2"].damage()
+    #         self.destroy()
+    #         sound.play()
 
 

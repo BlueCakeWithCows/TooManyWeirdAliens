@@ -48,15 +48,3 @@ class Sun(Entity):
 
     def update(self, delta_time):
         pass
-
-
-if __name__ == '__main__':
-    pygame.init()
-    screen = pygame.display.set_mode((300, 300), False)
-    import assets
-
-    assets.load_configs()
-    assets.load_assets()
-    sun = Sun(None)
-    earth = Earth(None, sun)
-    pygame.quit()

@@ -2,6 +2,7 @@ from entity.actor import Entity, Drawable
 from entity.ship import SpaceShip
 from misc import PURPLE
 from assets import texture, sound, value
+from entity.display import Arrow
 
 
 class PowerUp(Entity):
@@ -12,7 +13,7 @@ class PowerUp(Entity):
         self.position = position
         self.radius = value["pickup.size"]
         if arrow_enable:
-            from entity.display import Arrow
+
             self.arrow = Arrow(self, self.instance, PURPLE, 1)
             self.instance.create(self.arrow)
 
@@ -42,18 +43,3 @@ class EarthHealPack(PowerUp):
     def pickup_event(self, ship):
         self.sound.play()
         self.instance.earth.damage(value["pickup.heal_earth_amount"])
-
-
-if __name__ == '__main__':
-    import pygame
-
-    pygame.init()
-    screen = pygame.display.set_mode((300, 300), False)
-    import assets
-
-    assets.load_configs()
-    assets.load_assets()
-
-    earth_pack = EarthHealPack(None, (32, 32), False)
-    heal_pack = HealthPack(None, (-32, -32), False)
-    pygame.quit()

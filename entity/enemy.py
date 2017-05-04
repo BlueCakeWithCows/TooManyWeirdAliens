@@ -2,10 +2,12 @@ from entity.actor import Entity, Drawable
 import random
 from misc import distance_and_angle, add_rectangular, to_rectangular, to_polar, pythag_distance, RED
 from math import pi, sin, cos
-import pygame
-from assets import value, texture
-from entity.display import Arrow
 
+import pygame
+import copy
+from assets import value, texture, sound
+from entity.display import Arrow
+from entity.projectile import Projectile
 
 class Enemy(Entity):
     health = 1
@@ -14,11 +16,15 @@ class Enemy(Entity):
     facing_direction = 0
     speed = 0
     hyper_speed = 0
+    base_projectile =None
 
     def __init__(self, instance):
+        self.base_projectile = Projectile(instance, None, None, None)
         Entity.__init__(self, instance)
-        self.arrow = Arrow(self, instance, RED, 1)
-        self.instance.create(self.arrow)
+        if instance is not None:
+            self.arrow = Arrow(instance,self, RED, 1)
+            self.instance.create(self.arrow)
+
 
     def on_health_below_zero_event(self):
         self.destroy()
@@ -28,16 +34,16 @@ class Enemy(Entity):
 
 
 class Goblin(Enemy):
-    hyper_speed = value("enemy.goblin_hyper_speed")
-    speed = value("enemy.goblin_speed")
-    health = value("enemy.goblin_health")
-    radius = value("enemy.goblin_radius")
-    orbit_distance = value("enemy.goblin_orbit_distance")
-    hyper_speed_range = value("enemy.goblin_hyper_speed_range")
-    rotation_speed = value("enemy.goblin_rotation_speed")
-    weapon_speed = value("enemy.goblin_weapon_speed")
-    weapon_damage = value("enemy.goblin_weapon_damage")
-    weapon_velocity = value("enemy.goblin_weapon_velocity")
+    hyper_speed = value["enemy.goblin_hyper_speed"]
+    speed = value["enemy.goblin_speed"]
+    health = value["enemy.goblin_health"]
+    radius = value["enemy.goblin_radius"]
+    orbit_distance = value["enemy.goblin_orbit_distance"]
+    hyper_speed_range = value["enemy.goblin_hyper_speed_range"]
+    rotation_speed = value["enemy.goblin_rotation_speed"]
+    weapon_speed = value["enemy.goblin_weapon_speed"]
+    weapon_damage = value["enemy.goblin_weapon_damage"]
+    weapon_velocity = value["enemy.goblin_weapon_velocity"]
 
     def __init__(self, instance, position, target):
         Enemy.__init__(self, instance)
@@ -48,11 +54,14 @@ class Goblin(Enemy):
 
     def create_drawable(self):
         self.drawable = Drawable(texture["goblin"], None, False, True)
+        self.base_projectile.image = texture["goblin_bomb"]
+        self.base_projectile.damage = self.weapon_damage
+        self.base_projectile.sound = sound["destroyed"]
 
     def update(self, delta_time):
-        if (self.mode == "SEARCH"):
+        if self.mode == "SEARCH":
             self.search_mode(delta_time)
-        elif (self.mode == "DESTROY"):
+        elif self.mode == "DESTROY":
             self.destroy_mode(delta_time)
         self.update_image()
 
@@ -67,8 +76,7 @@ class Goblin(Enemy):
         if distance < self.orbit_distance: self.mode = "DESTROY"
 
         self.velocity_polar = speed, self.facing_direction
-        speed = speed * delta_time
-        self.position = add_rectangular(to_rectangular(speed, self.facing_direction))
+        self.position = self.position[0] + self.velocity[0] * delta_time, self.position[1] + self.velocity[1] *delta_time
 
     timer = 0
 
@@ -87,26 +95,24 @@ class Goblin(Enemy):
         self.timer = self.timer - delta_time
         if (self.timer < 0):
             self.timer = self.weapon_speed
-            sp, an = to_polar(self.v_x, -self.v_y)
-            projectile = Enemy_Projectile(self.position, -(self.angle + pi / 8 * self.direction), sp, an,
-                                          self.weapon_damage, RED,
-                                          self.weapon_velocity, Assets.goblin_bomb_art)
-            self.instance.create(projectile)
+            p = copy.copy(self.base_projectile)
+            p.position = self.position[0], self.position[1]
+            p.rotation = self.facing_direction
+            p.velocity_polar = self.velocity_polar[0] + self.weapon_velocity, self.velocity_polar[1]
+            self.instance.create(p)
 
-        self.update_image()
-        self.update_position()
-        self.collision()
+
 
 
 class Hunter(Enemy):
-    hyper_speed = value("enemy.hunter_hyper_speed")
-    speed = value("enemy.hunter_speed")
-    health = value("enemy.hunter_health")
-    radius = value("enemy.hunter_radius")
-    weapon_speed = value("enemy.hunter_weapon_speed")
-    weapon_damage = value("enemy.hunter_weapon_damage")
-    weapon_velocity = value("enemy.hunter_weapon_velocity")
-    hyper_speed_range = value("enemy.hunter_hyper_speed_range")
+    hyper_speed = value["enemy.hunter_hyper_speed"]
+    speed = value["enemy.hunter_speed"]
+    health = value["enemy.hunter_health"]
+    radius = value["enemy.hunter_radius"]
+    weapon_speed = value["enemy.hunter_weapon_speed"]
+    weapon_damage = value["enemy.hunter_weapon_damage"]
+    weapon_velocity = value["enemy.hunter_weapon_velocity"]
+    hyper_speed_range = value["enemy.hunter_hyper_speed_range"]
 
     def __init__(self, instance, position, target):
         Enemy.__init__(self, instance)
@@ -116,6 +122,9 @@ class Hunter(Enemy):
 
     def create_drawable(self):
         self.drawable = Drawable(texture["hunter"], None, False, True)
+        self.base_projectile.drawable = texture["hunter_missile"]
+        self.base_projectile.damage = self.weapon_damage
+        self.base_projectile.sound = sound["destroyed"]
 
     timer = 0
 
@@ -157,25 +166,25 @@ class Hunter(Enemy):
             self.fire(direction)
 
     def fire(self, angle):
-        sp, an = self.velocity
-        projectile = Enemy_Projectile(self.position, -angle, sp, an,
-                                      self.weapon_damage, Assets.RED, self.weapon_velocity, Assets.hunter_rocket_art,
-                                      .5)
-        self.instance.create(projectile)
+        p = copy.copy(self.base_projectile)
+        p.position = self.position[0], self.position[1]
+        p.rotation = self.facing_direction
+        p.velocity_polar = self.velocity_polar[0] + self.weapon_velocity, self.velocity_polar[1] + angle
+        self.instance.create(p)
 
 
 class Bombarder(Goblin):
-    hyper_speed = value("enemy.bombarder_hyper_speed")
-    speed = value("enemy.bombarder_speed")
-    health = value("enemy.bombarder_health")
-    radius = value("enemy.bombarder_radius")
-    orbit_distance = value("enemy.bombarder_orbit_distance")
-    hyper_speed_range = value("enemy.bombarder_hyper_speed_range")
-    rotation_speed = value("enemy.bombarder_rotation_speed")
-    weapon_speed = value("enemy.bombarder_weapon_speed")
-    weapon_damage = value("enemy.bombarder_weapon_damage")
-    weapon_velocity = value("enemy.bombarder_weapon_velocity")
-    weapon_duration = value("enemy.weapon_duration")
+    hyper_speed = value["enemy.bombarder_hyper_speed"]
+    speed = value["enemy.bombarder_speed"]
+    health = value["enemy.bombarder_health"]
+    radius = value["enemy.bombarder_radius"]
+    orbit_distance = value["enemy.bombarder_orbit_distance"]
+    hyper_speed_range = value["enemy.bombarder_hyper_speed_range"]
+    rotation_speed = value["enemy.bombarder_rotation_speed"]
+    weapon_speed = value["enemy.bombarder_weapon_speed"]
+    weapon_damage = value["enemy.bombarder_weapon_damage"]
+    weapon_velocity = value["enemy.bombarder_weapon_velocity"]
+    weapon_duration = value["enemy.weapon_duration"]
 
     def __init(self, instance, position, target):
         Goblin.__init__(self, instance, position, target)
@@ -183,6 +192,9 @@ class Bombarder(Goblin):
 
     def create_drawable(self):
         self.drawable = Drawable(texture["bombarder"], None, False, True)
+        self.base_projectile.drawable = texture["goblin_bomb"]
+        self.base_projectile.damage = self.weapon_damage
+        self.base_projectile.sound = sound["destroyed"]
 
     timer = 0
 
@@ -190,11 +202,11 @@ class Bombarder(Goblin):
         self.timer = self.timer - delta_time
         if (self.timer < 0):
             self.timer = self.weapon_speed
-            angle = -pi / 4
+            angle = -pi / 5
             for i in range(10):
-                sp, an = self.velocity_polar
-                projectile = Enemy_Projectile(self.position, -(self.angle + angle + pi / 8 * self.direction), sp, an,
-                                              self.weapon_damage, Assets.RED,
-                                              self.weapon_velocity, Assets.bombarder_bomb_art, .5)
-                projectile.timer = self.weapon_duration
-                self.instance.create(projectile)
+                p = copy.copy(self.base_projectile)
+                p.position = self.position[0], self.position[1]
+                p.rotation = self.facing_direction
+                p.velocity_polar = self.velocity_polar[0] + self.weapon_velocity, self.velocity_polar[1] + angle
+                self.instance.create(p)
+                angle = angle + pi/22.5

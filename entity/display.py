@@ -49,7 +49,7 @@ class Arrow(Entity):
         self.scale = size
         self.color = color
         self.target = target
-        self.camera = instance.self.camera
+        self.camera = instance.camera
         self.base_image = None
         self.create_base()
 

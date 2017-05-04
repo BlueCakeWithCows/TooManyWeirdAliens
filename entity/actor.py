@@ -113,7 +113,8 @@ class Entity:
             self._velocity = (args[0], args[1])
         else:
             raise ValueError('Wrong typed passed to velocity setter. Expected tuple or x and y')
-        self._velocity_polar = to_polar(self._velocity)
+        if self.velocity is not None:
+            self._velocity_polar = to_polar(self._velocity)
 
     @property
     def v_x(self):
