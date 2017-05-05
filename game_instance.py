@@ -7,9 +7,7 @@ from entity.enemy import Goblin
 import pygame
 from math import pi
 from misc import GREEN
-
-debug = False
-
+from assets import music, value
 
 class Instance(Window):
     day = 0
@@ -20,14 +18,14 @@ class Instance(Window):
 
     def __init__(self):
         Window.__init__(self)
-
+        mixer.music.load(music["song1"])
         mixer.music.play(-1)
-
-        self.earth = Earth(self)
         self.sun = Sun(self)
+        self.earth = Earth(self, self.sun)
         self.earth_arrow = Arrow(self, self.earth, GREEN, 1)
         self.ship = SpaceShip(self)
         self.camera.target = self.ship
+        self.camera.offset = (-value["init.half_width"], -value["init.half_height"])
         self.create(StarrySky(self))
         self.create(self.earth)
         self.create(self.sun)
@@ -48,17 +46,16 @@ class Instance(Window):
             raise ValueError("Cannot add null object to gamelist")
 
     def listen(self, deltaTime):
-        self.day = self.day + 365 * (Assets.EARTH_ANGLULAR_SPEED / (2 * pi)) * deltaTime
+        self.day = self.day + 365 * (self.earth.angular_speed / (2 * pi)) * deltaTime
 
         if ((self.ship.health < 1 or self.earth.health < 1) and self.ship in self.update_list):
             self.update_list.remove(self.ship)
-            disp = Loss_Display(self.day)
-            self.draw_list.append(disp)
-            self.update_list.append(disp)
+            # disp = Loss_Display(self.day)
+            # self.draw_list.append(disp)
+            # self.update_list.append(disp)
 
     def pass_event(self, event):
         if (event.type == pygame.KEYDOWN):
             if event.key == pygame.K_k:
-                global debug
-                debug = not debug
-                print("Debug Toggle to ", debug)
+                self.debug = not self.debug
+                print("Debug Toggle to ", self.debug)

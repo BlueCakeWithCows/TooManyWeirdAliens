@@ -1,5 +1,5 @@
 from entity.actor import Entity
-
+from misc import add_rectangular
 
 class Window:
     debug = False
@@ -20,6 +20,7 @@ class Window:
 
     def update(self, deltaTime):
         self.listen(deltaTime)
+        self.camera.update(deltaTime)
         for i in self.update_list:
             i.update(deltaTime)
         return
@@ -33,10 +34,11 @@ class Window:
 
 
 class Camera(Entity):
-    def __init__(self, instance, target):
+    def __init__(self, instance, target, offset= (0,0)):
         Entity.__init__(self, instance)
         self.target = target
+        self.offset = offset
 
     def update(self, delta_time):
         if self.target is not None:
-            self.position = self.target.position()
+            self.position = add_rectangular(self.target.position, self.offset)

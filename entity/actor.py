@@ -139,11 +139,12 @@ class Entity:
     @velocity_polar.setter
     def velocity_polar(self, *args):
         if len(args) == 1:
-            self.velocity_polar = args[0]
+            self._velocity_polar = args[0]
         elif len(args) == 2:
-            self.velocity_polar = (args[0], args[1])
+            self._velocity_polar = (args[0], args[1])
         else:
             raise ValueError('Wrong typed passed to velocity polar setter. Expected tuple or x and y')
+
         self._velocity = to_rectangular(self._velocity_polar)
 
 
@@ -161,11 +162,11 @@ class Drawable:
 
     def draw(self, screen, camera_offset=(0, 0)):
         if self.ignore_offset:
-            x = self.screen_x
-            y = self.screen_y
+            x = self.position[0]
+            y = self.position[1]
         else:
-            x = self.screen_x - camera_offset[0]
-            y = self.screen_y - camera_offset[1]
+            x = self.position[0] - camera_offset[0]
+            y = self.position[1] - camera_offset[1]
         screen.blit(self.image, (x, y))
 
     @property
@@ -180,7 +181,7 @@ class Drawable:
             self._position = (args[0], args[1])
         else:
             raise ValueError('Wrong typed passed to position setter. Expected tuple or x and y')
-        if self.draw_from_center:
+        if self.draw_from_center and self.image is not None:
             self._position = (self.x - self.image.get_width() / 2, self.y - self.image.get_height() / 2)
 
     @property

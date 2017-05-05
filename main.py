@@ -1,5 +1,11 @@
+from assets import value, load_configs,load_assets
+
+load_configs()
 import pygame.transform
+import pygame
 from game_instance import Instance
+
+from misc import BLACK
 import os
 
 pygame.mixer.pre_init(22050, 16, 2, 1024)
@@ -7,16 +13,17 @@ pygame.mixer.pre_init(22050, 16, 2, 1024)
 pygame.init()
 
 RESIZABLE = True
-screen = pygame.display.set_mode((Assets.WIDTH, Assets.HEIGHT), RESIZABLE)
+screen = pygame.display.set_mode((value["init.window_width"], value["init.window_height"]), RESIZABLE)
 pygame.display.set_caption('Too Many Weird Aliens')
-Assets.load()
-
-virtual_screen = screen.copy()
+load_assets()
+virtual_screen = pygame.transform.scale(screen.copy(), (value["init.virtual_width"], value["init.virtual_height"]))
 running = True
 
 game_screen = Instance()
 
 getTicksLastFrame = pygame.time.get_ticks()
+
+v_ratio = value["init.virtual_width"]/value["init.virtual_height"]
 while running:
 
     t = pygame.time.get_ticks()
@@ -24,10 +31,9 @@ while running:
     deltaTime = (t - getTicksLastFrame) / 1000.0
     getTicksLastFrame = t
     game_screen.update(deltaTime)
-    virtual_screen.fill(Assets.BLACK)
+    virtual_screen.fill(BLACK)
     game_screen.draw(virtual_screen)
     x, y = screen.get_size()
-    v_ratio = Assets.WIDTH / Assets.HEIGHT
     ratio = x / y
     size = 0, 0
     pos = 0, 0
@@ -41,7 +47,7 @@ while running:
     size = int(size[0]), int(size[1])
     temp_screen = pygame.transform.scale(virtual_screen, size)
 
-    screen.fill(Assets.BLACK)
+    screen.fill(BLACK)
     screen.blit(temp_screen, pos)
 
     pygame.display.flip()

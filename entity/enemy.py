@@ -30,7 +30,8 @@ class Enemy(Entity):
         self.destroy()
 
     def update_image(self):
-        self.drawable.image = pygame.transform.rotate(self.image, self.facing_direction * -180 / pi)
+        if self.image is not None:
+            self.drawable.image = pygame.transform.rotate(self.image, self.facing_direction * -180 / pi)
 
 
 class Goblin(Enemy):
@@ -66,7 +67,7 @@ class Goblin(Enemy):
         self.update_image()
 
     def search_mode(self, delta_time):
-        distance, angle = distance_and_angle(self.position, self.target)
+        distance, angle = distance_and_angle(self.position, self.target.position)
         self.facing_direction = angle
 
         if (distance > self.hyper_speed_range):

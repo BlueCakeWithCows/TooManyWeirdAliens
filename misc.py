@@ -41,7 +41,7 @@ def add_rectangular(a, b):
 
 def to_rectangular(a, b=None):
     if b is None:
-        a, b = a[0], a[1]
+        a, b = a[0], float(a[1])
     return cos(b) * a, sin(b) * a
 
 

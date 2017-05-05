@@ -37,11 +37,7 @@ class Arrow(Entity):
     target = None
     scale = 1
 
-    ARROW_AXIS_LEFT = value["arrow.left_axis"]
-    ARROW_AXIS_BOTTOM = value["arrow.bottom_axis"]
-    ARROW_AXIS_RIGHT = value["arrow.right_axis"]
-    ARROW_AXIS_TOP = value["arrow.top_axis"]
-    my_font = font["arrow_font"]
+
     camera = None
 
     def __init__(self, instance, target, color, size):
@@ -52,6 +48,11 @@ class Arrow(Entity):
         self.camera = instance.camera
         self.base_image = None
         self.create_base()
+        self.ARROW_AXIS_LEFT = value["arrow.left_axis"]
+        self.ARROW_AXIS_BOTTOM = value["arrow.bottom_axis"]
+        self.ARROW_AXIS_RIGHT = value["arrow.right_axis"]
+        self.ARROW_AXIS_TOP = value["arrow.top_axis"]
+        self.my_font = font["arrow_font"]
 
     def create_base(self):
         surf = Surface((64, 32), pygame.SRCALPHA, 32)

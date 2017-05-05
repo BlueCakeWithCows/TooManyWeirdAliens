@@ -34,7 +34,7 @@ class SpaceShip(Entity):
         self.acceleration = value["ship.acceleration"]
         self.max_speed = value["ship.max_speed"]
         self.fire_sound = sound["player_fire_sound"]
-        self.fire_speed = value["ship.fire_speed"]
+        self.fire_speed = value["ship.weapon_speed"]
         self.projectile = Projectile(instance, None, None, None)
         self.projectile.image = texture["bottle_rocket"]
         self.projectile.sound = sound["earth_hit"]
@@ -66,7 +66,7 @@ class SpaceShip(Entity):
         self.k_left = keys[pygame.K_LEFT] or keys[pygame.K_a]
 
     def calculate_new_velocity(self, delta_time):
-        delta_v = 0
+        delta_v = 0,0
         current_v, current_v_angle = self.velocity_polar
 
         if self.k_down:
@@ -75,17 +75,17 @@ class SpaceShip(Entity):
             velocity = max(current_v - self.auto_deacceleration * delta_time, 0), current_v_angle
 
         if self.k_left:
-            self.direction += delta_time * self.angular_speed
-        if self.k_right:
             self.direction -= delta_time * self.angular_speed
+        if self.k_right:
+            self.direction += delta_time * self.angular_speed
 
         if self.k_up:
             delta_v = self.acceleration * delta_time, self.direction
+            velocity = add_polar(self.velocity_polar, delta_v)
 
-        velocity = add_polar(delta_v, velocity)
         velocity = min_polar(velocity, self.max_speed)
 
-        self.velocity_polar = velocity()
+        self.velocity_polar = velocity
 
     def calculate_new_position(self, delta_time):
         delta_position = delta_time * self.v_x, delta_time * self.v_y
@@ -96,7 +96,7 @@ class SpaceShip(Entity):
             image = self.base_image_fire
         else:
             image = self.base_image
-        self.drawable.image = pygame.transform.rotate(image, 180 / pi * self.direction)
+        self.drawable.image = pygame.transform.rotate(image, -180 / pi * self.direction)
         self.drawable.image = self.drawable.image.convert_alpha()
 
     cooldown = 0
@@ -107,6 +107,8 @@ class SpaceShip(Entity):
             self.fire_sound.play()
             self.cooldown = self.fire_speed
             p = copy.copy(self.projectile)
+            p.position = self.position
             p.velocity_polar = add_polar(self.velocity_polar, (self.weapon_velocity, self.direction))
             p.rotation = self.direction
+            p.create()
             self.instance.create(p)
