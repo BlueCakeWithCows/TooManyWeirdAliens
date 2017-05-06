@@ -1,6 +1,6 @@
 from entity.actor import Entity, Drawable
 import random
-from misc import distance_and_angle, add_rectangular, to_rectangular, to_polar, pythag_distance, RED
+from misc import distance_and_angle, add_rectangular, to_rectangular, to_polar, add_polar, pythag_distance, RED
 from math import pi, sin, cos
 
 import pygame
@@ -54,7 +54,8 @@ class Goblin(Enemy):
         self.mode = "SEARCH"
 
     def create_drawable(self):
-        self.drawable = Drawable(texture["goblin"], None, False, True)
+        self.image = texture["goblin"]
+        self.drawable = Drawable(None, None, False, True)
         self.base_projectile.image = texture["goblin_bomb"]
         self.base_projectile.damage = self.weapon_damage
         self.base_projectile.sound = sound["destroyed"]
@@ -64,6 +65,7 @@ class Goblin(Enemy):
             self.search_mode(delta_time)
         elif self.mode == "DESTROY":
             self.destroy_mode(delta_time)
+
         self.update_image()
 
     def search_mode(self, delta_time):
@@ -99,7 +101,7 @@ class Goblin(Enemy):
             p = copy.copy(self.base_projectile)
             p.position = self.position[0], self.position[1]
             p.rotation = self.facing_direction
-            p.velocity_polar = self.velocity_polar[0] + self.weapon_velocity, self.velocity_polar[1]
+            p.velocity_polar = add_polar(self.velocity_polar, (self.weapon_velocity,self.facing_direction))
             self.instance.create(p)
 
 

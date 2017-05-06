@@ -1,6 +1,6 @@
 from entity.actor import Entity
-from misc import add_rectangular
-
+from misc import add_rectangular, sub_rectangular, scale_rectangular
+from pygame import Rect
 class Window:
     debug = False
     draw_list = []
@@ -11,7 +11,8 @@ class Window:
 
     def draw(self, screen):
         for i in self.draw_list:
-            i.draw(screen, self.camera.position)
+            if self.camera.on_screen(i):
+                i.draw(screen, self.camera.position)
 
         if self.debug:
             for i in self.draw_list:
@@ -20,9 +21,9 @@ class Window:
 
     def update(self, deltaTime):
         self.listen(deltaTime)
-        self.camera.update(deltaTime)
         for i in self.update_list:
             i.update(deltaTime)
+        self.camera.update(deltaTime)
         return
 
     # Override below methods
@@ -34,11 +35,23 @@ class Window:
 
 
 class Camera(Entity):
+
     def __init__(self, instance, target, offset= (0,0)):
         Entity.__init__(self, instance)
         self.target = target
         self.offset = offset
+        self.rect = Rect(sub_rectangular(self.position, (0, 0)), scale_rectangular(self.offset, -2))
+    def on_screen(self, o):
+        if o.drawable is not None and o.drawable.image is not None and o.drawable.position is not None:
+            r = Rect(o.drawable.position, (o.drawable.image.get_size()))
+            return r.colliderect(self.rect)
+        return True
+
+    def point_on_screen(self, o):
+        return self.rect.collidepoint(o)
 
     def update(self, delta_time):
         if self.target is not None:
             self.position = add_rectangular(self.target.position, self.offset)
+            self.rect = Rect(sub_rectangular(self.position, (0, 0)), scale_rectangular(self.offset, -2))
+

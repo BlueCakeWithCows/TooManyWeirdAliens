@@ -6,7 +6,7 @@ from pygame import Surface, Rect
 
 from assets import value, font
 from entity.actor import Entity, Drawable
-from misc import WHITE, BLACK, distance_and_angle
+from misc import WHITE, BLACK, distance_and_angle, shift, create_matrix, add_rectangular, sub_rectangular
 
 
 class Display(Entity):
@@ -118,9 +118,13 @@ class Arrow(Entity):
 
 
 class StarrySky(Entity):
+
     def __init__(self, instance):
         Entity.__init__(self, instance)
         self.rand = random.Random()
+        self.last_position = None
+        self.width,self.height = value["init.virtual_width"]/self.d + 2, value["init.virtual_height"]/self.d +2
+        self.matrix = create_matrix(ceil(self.height), ceil(self.width))
 
     def hash(self, i):
         return ((i * 977) % (2 ** 7)) - 64
@@ -130,14 +134,40 @@ class StarrySky(Entity):
 
     d = 80
 
-    def draw(self, screen, offset):
-        camera_x, camera_y = offset
-        start_x, start_y = floor(camera_x / self.d) - 1, floor(camera_y / self.d) - 1
+    def update(self, delta_time):
+        return
+        m_x,m_y = self.position = self.instance.camera.position
+        if self.last_position is None:
+            start_x, start_y = floor(m_x / self.d) , floor(m_y / self.d)
+            for col in range(len(self.matrix)):
+                for row in range(len(self.matrix[col])):
+                    x = col + start_x - 1
+                    y = row + start_y - 1
+                    self.rand.seed(x + y * (x - y) + (x * y))
+                    self.matrix[col][row] = self.rand.randint(-32,32), self.rand.randint(-32,32)
+            self.last_position = self.position
+        delta = sub_rectangular(self.position, self.last_position)
+        if abs(delta[0])> 80:
+            self.matrix = shift('left', 1, self.matrix)
+            self.last_position = self.position
+        if abs(delta[0]) < -80:
+            self.matrix = shift('right', 1, self.matrix)
+            self.last_position = self.position
+        if abs(delta[1])> 80:
+            self.matrix = shift('up', 1, self.matrix)
+            self.last_position = self.position
+        if abs(delta[1]) < -80:
+            self.matrix = shift('down', 1, self.matrix)
+            self.last_position = self.position
 
-        end_x, end_y = ceil(start_x + value["init.virtual_width"] / self.d) + 2, ceil(
-            start_y + value["init.virtual_height"] / self.d) + 2
-        for x in range(int(start_x), int(end_x)):
-            for y in range(int(start_y), int(end_y)):
+
+    def draw(self, screen, offset):
+        camera_x, camera_y = self.instance.camera.position
+        start_x, start_y = floor(camera_x / self.d) - 1, floor(camera_y / self.d)
+
+        end_x, end_y = ceil(start_x + self.width) + 2, ceil(start_y + self.height)
+        for x in range(start_x, end_x):
+            for y in range(start_y, end_y):
                 self.rand.seed(x + y * (x - y) + (x * y))
                 x_pos = self.d * x - camera_x + self.rand.randint(-32, 32)
                 y_pos = self.d * y - camera_y + self.rand.randint(-32, 32)

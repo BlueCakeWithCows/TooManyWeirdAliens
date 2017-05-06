@@ -10,7 +10,7 @@ class Projectile(Entity):
     sound = None
     image = None
 
-    def __init__(self, instance=None, position=(0,0), velocity=(0,0), rotation=0):
+    def __init__(self,owner = None, instance=None, position=(0,0), velocity=(0,0), rotation=0):
         self.position = position
         Entity.__init__(self, instance)
 
@@ -26,7 +26,6 @@ class Projectile(Entity):
     def update(self, delta_time):
         Entity.update(self, delta_time)
         if self._current_rotation is not self.rotation and self.image is not None:
-            print(self.rotation)
             self.drawable.image = pygame.transform.rotate(self.image, -180/ pi * self.rotation)
             self._current_rotation = self.rotation
 

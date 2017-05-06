@@ -38,13 +38,14 @@ class Sun(Entity):
         self.radius = value["planet.sun_radius"]
         x = value["planet.sun_x"]
         y = value["planet.sun_y"]
-        self.position = x, y
+
         Entity.__init__(self, instance)
+        self.position = self.position
 
     def create_drawable(self):
-        surf = pygame.Surface((self.radius * 2, self.radius * 2))
+        surf = pygame.Surface((self.radius * 2, self.radius * 2)).convert()
         pygame.draw.circle(surf, YELLOW, (self.radius, self.radius), self.radius)
         self.drawable = Drawable(surf, self.position, False, True)
-
     def update(self, delta_time):
         pass
+        #Entity.update(self, delta_time)

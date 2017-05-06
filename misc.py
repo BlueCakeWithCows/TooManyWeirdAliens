@@ -39,6 +39,11 @@ def add_rectangular(a, b):
     return z
 
 
+def sub_rectangular(a, b):
+    z = a[0] - b[0], a[1] - b[1]
+    return z
+
+
 def to_rectangular(a, b=None):
     if b is None:
         a, b = a[0], float(a[1])
@@ -59,6 +64,34 @@ def max_polar(polar, limit):
     speed = max(polar[0], limit)
     return (speed, polar[1])
 
+
+UP, DOWN, LEFT, RIGHT = 'up', 'down', 'left', 'right'
+
+def create_matrix(width, height):
+    return [[0 for x in range(width)] for y in range(height)]
+
+def shift(direction, number, matrix):
+    ''' shift given 2D matrix in-place the given number of rows or columns
+        in the specified (UP, DOWN, LEFT, RIGHT) direction and return it
+    '''
+    if direction in (UP, DOWN):
+        n =  (number % len(matrix) if direction == UP else
+            -(number % len(matrix)))
+        h = matrix[:n]
+        del matrix[:n]
+        matrix.extend(h)
+        return matrix
+    elif direction in (LEFT, RIGHT):
+        n =  (number % len(matrix[0]) if direction == LEFT else
+            -(number % len(matrix[0])))
+        temp = list(zip(*matrix))
+        h = temp[:n]
+        del temp[:n]
+        temp.extend(h)
+        matrix[:] = map(list, zip(*temp))
+        return matrix
+    else:
+        return matrix
 
 BLUE = 0, 0, 255
 BLACK = 0, 0, 0

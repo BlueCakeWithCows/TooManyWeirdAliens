@@ -35,11 +35,11 @@ class Entity:
     def create_drawable(self):
         pass
 
-    # Add reference to instance
     def destroy(self):
         if (self.arrow is not None):
             self.arrow.destroy()
-        pass
+        if self.instance is not None():
+            self.instance.remove(self)
 
     def damage(self, amount):
         self.health = self.health - amount
@@ -71,7 +71,7 @@ class Entity:
         # assume point, radius
         point = args[0]
         radius = args[1]
-        if pythag_distance(self.position, point)[0] < self.radius + radius:
+        if pythag_distance(self.position, point) < self.radius + radius:
             return True
         return False
 
@@ -156,9 +156,9 @@ class Drawable:
 
     def __init__(self, image=None, position=(0, 0), gui=False, draw_from_center=True):
         self.image = image
-        self._position = position
         self.center = draw_from_center
         self.ignore_offset = gui
+        self._position = position
 
     def draw(self, screen, camera_offset=(0, 0)):
         if self.ignore_offset:
@@ -182,6 +182,7 @@ class Drawable:
         else:
             raise ValueError('Wrong typed passed to position setter. Expected tuple or x and y')
         if self.draw_from_center and self.image is not None:
+
             self._position = (self.x - self.image.get_width() / 2, self.y - self.image.get_height() / 2)
 
     @property
