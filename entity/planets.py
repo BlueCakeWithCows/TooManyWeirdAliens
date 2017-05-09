@@ -5,6 +5,31 @@ from entity.actor import Entity, Drawable
 from misc import YELLOW
 from assets import value, texture
 
+class Planet(Entity):
+    def __init__(self, instance, target, radius, image, angle, angular_speed, orbit_radius):
+        self.image = image
+        self.target = target
+        Entity.__init__(self, instance)
+        self.radius = radius
+        self.theta = angle
+        self.distance = orbit_radius
+        self.angular_speed = angular_speed
+
+        self.calculate_position()
+
+    def create_drawable(self):
+        self.drawable = Drawable(self.image, self.position, False, True)
+
+    def calculate_position(self):
+        x = self.distance * cos(self.theta) + self.target.x
+        y = self.distance * sin(self.theta) + self.target.y
+        self.position = (x, y)
+
+    def update(self, delta_time):
+        self.theta += self.angular_speed * delta_time
+        self.theta = self.theta % (2 * pi)
+        self.calculate_position()
+
 
 class Earth(Entity):
     health = 0

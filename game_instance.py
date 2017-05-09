@@ -1,5 +1,5 @@
 from window import Window
-from entity.planets import Earth, Sun
+from entity.planets import Earth, Sun, Planet
 from entity.display import Arrow, StarrySky
 from entity.ship import SpaceShip
 from pygame import mixer
@@ -8,7 +8,7 @@ import pygame
 from math import pi
 import collision
 from misc import GREEN
-from assets import music, value
+from assets import music, value, texture
 
 class Instance(Window):
     day = 0
@@ -24,6 +24,9 @@ class Instance(Window):
         self.collision_list = []
         self.sun = Sun(self)
 
+        mercury = Planet(self, self.sun,value["planet.mercury_radius"],texture["mercury"],value["planet.mercury_angle"],value["planet.mercury_angular_speed"],value["planet.mercury_orbit_distance"])
+        self.create(mercury)
+        self.create(Arrow(self, mercury, GREEN, 1))
         self.earth = Earth(self, self.sun)
         self.earth_arrow = Arrow(self, self.earth, GREEN, 1)
         self.ship = SpaceShip(self)

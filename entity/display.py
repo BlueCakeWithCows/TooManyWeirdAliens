@@ -63,11 +63,9 @@ class Arrow(Entity):
         self.drawable = Drawable(self.base_image.copy(), self.position, True, True)
 
     def update_image(self):
-        rect = Rect(self.camera.x, self.camera.y, value["init.virtual_width"], value["init.virtual_height"])
-        if rect.collidepoint(self.target.x, self.target.y):
+        if self.instance.camera.point_on_screen(self.target.position):
             self.visible = False
             return
-
         self.visible = True
 
         distance, angle = distance_and_angle(
@@ -98,7 +96,6 @@ class Arrow(Entity):
         if new_x < self.ARROW_AXIS_LEFT: new_x = self.ARROW_AXIS_LEFT
         if new_y < self.ARROW_AXIS_TOP: new_y = self.ARROW_AXIS_TOP
         if new_y > self.ARROW_AXIS_BOTTOM: new_y = self.ARROW_AXIS_BOTTOM
-
         self.position = new_x, new_y
         string = str(int(distance))
         label = self.my_font.render(string, 1, BLACK)
@@ -110,12 +107,17 @@ class Arrow(Entity):
         else:
             image.blit(label, (10, 6))
         size = (int(64 * self.scale), int(32 * self.scale))
+
         self.drawable.image = pygame.transform.rotate(pygame.transform.scale(image, size), angle * 180 / pi)
-        self.drawable.image.convert()
+
+        print(self.position, " ", self.visible," ", self.drawable.image)
 
     def update(self, delta_time):
         self.update_image()
-
+    def draw(self, screen, offset):
+        print ("yo")
+        if self.drawable is not None and self.visible == True:
+            self.drawable.draw(screen, offset)
 
 class StarrySky(Entity):
 

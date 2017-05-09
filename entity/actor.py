@@ -50,7 +50,7 @@ class Entity:
         pass
 
     def draw(self, screen, offset):
-        if self.drawable is not None and self.visible == True:
+        if self.drawable is not None and self.visible:
             self.drawable.draw(screen, offset)
 
     def debug_draw(self, screen, offset):
@@ -74,6 +74,12 @@ class Entity:
         if pythag_distance(self.position, point) < self.radius + radius:
             return True
         return False
+
+    def is_gui(self):
+        if self.drawable is None:
+            return False
+        else:
+            return self.drawable.ignore_offset
 
     def inform_collision(self, *args):
         pass

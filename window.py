@@ -11,7 +11,7 @@ class Window:
 
     def draw(self, screen):
         for i in self.draw_list:
-            if self.camera.on_screen(i):
+            if i.is_gui() or self.camera.on_screen(i):
                 i.draw(screen, self.camera.position)
 
         if self.debug:

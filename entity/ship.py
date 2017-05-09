@@ -62,7 +62,7 @@ class SpaceShip(Entity):
         self.k_fire = keys[pygame.K_SPACE]
         self.k_up = keys[pygame.K_UP] or keys[pygame.K_w]
         self.k_down = keys[pygame.K_DOWN] or keys[pygame.K_s]
-        self.k_right = keys[pygame.K_RIGHT]
+        self.k_right = keys[pygame.K_RIGHT] or keys[pygame.K_d]
         self.k_left = keys[pygame.K_LEFT] or keys[pygame.K_a]
 
     def calculate_new_velocity(self, delta_time):
