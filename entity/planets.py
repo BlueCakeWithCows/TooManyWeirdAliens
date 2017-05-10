@@ -6,29 +6,33 @@ from misc import YELLOW
 from assets import value, texture
 
 class Planet(Entity):
-    def __init__(self, instance, target, radius, image, angle, angular_speed, orbit_radius):
+    def __init__(self, name, target, radius, image, angle, orbit_period, orbit_radius):
+        self.name = name
         self.image = image
         self.target = target
-        Entity.__init__(self, instance)
         self.radius = radius
         self.theta = angle
         self.distance = orbit_radius
-        self.angular_speed = angular_speed
-
+        self.orbit_period = orbit_period
+        self.initial_angle = angle
+        Entity.__init__(self, None)
         self.calculate_position()
 
     def create_drawable(self):
         self.drawable = Drawable(self.image, self.position, False, True)
 
     def calculate_position(self):
-        x = self.distance * cos(self.theta) + self.target.x
-        y = self.distance * sin(self.theta) + self.target.y
-        self.position = (x, y)
+        if self.target is not None:
+            x = self.distance * cos(self.theta) + self.target.x
+            y = self.distance * sin(self.theta) + self.target.y
+            self.position = (x, y)
+
 
     def update(self, delta_time):
-        self.theta += self.angular_speed * delta_time
-        self.theta = self.theta % (2 * pi)
-        self.calculate_position()
+        if self.orbit_period is not 0:
+            self.theta = self.initial_angle + (self.instance.day / self.orbit_period) * 2 * pi
+            self.theta = self.theta % (2 * pi)
+            self.calculate_position()
 
 
 class Earth(Entity):

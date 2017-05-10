@@ -6,7 +6,7 @@ from pygame import Surface, Rect
 
 from assets import value, font
 from entity.actor import Entity, Drawable
-from misc import WHITE, BLACK, distance_and_angle, shift, create_matrix, add_rectangular, sub_rectangular
+from misc import WHITE, BLACK, RED, distance_and_angle, shift, create_matrix, add_rectangular, sub_rectangular
 
 
 class Display(Entity):
@@ -47,17 +47,21 @@ class Arrow(Entity):
         self.target = target
         self.camera = instance.camera
         self.base_image = None
-        self.create_base()
+
         self.ARROW_AXIS_LEFT = value["arrow.left_axis"]
         self.ARROW_AXIS_BOTTOM = value["arrow.bottom_axis"]
         self.ARROW_AXIS_RIGHT = value["arrow.right_axis"]
         self.ARROW_AXIS_TOP = value["arrow.top_axis"]
         self.my_font = font["arrow_font"]
+        self.create_base()
 
     def create_base(self):
         surf = Surface((64, 32), pygame.SRCALPHA, 32)
+
+
         pygame.draw.rect(surf, self.color, Rect(0, 8, 44, 16))
         pygame.draw.polygon(surf, self.color, [(44, 0), (64, 16), (44, 32)])
+
         # noinspection PyArgumentList
         self.base_image = surf.convert_alpha()
         self.drawable = Drawable(self.base_image.copy(), self.position, True, True)
@@ -101,7 +105,12 @@ class Arrow(Entity):
         label = self.my_font.render(string, 1, BLACK)
 
         image = self.base_image.copy()
-
+        if hasattr(self.target, "name"):
+            label2 = self.my_font.render(self.target.name, 1, WHITE)
+            if co < 0:
+                image.blit(pygame.transform.rotate(label2, 180), (0, -8))
+            else:
+                image.blit(label2, (0, -8))
         if co < 0:
             image.blit(pygame.transform.rotate(label, 180), (10, 6))
         else:
@@ -110,12 +119,10 @@ class Arrow(Entity):
 
         self.drawable.image = pygame.transform.rotate(pygame.transform.scale(image, size), angle * 180 / pi)
 
-        print(self.position, " ", self.visible," ", self.drawable.image)
 
     def update(self, delta_time):
         self.update_image()
     def draw(self, screen, offset):
-        print ("yo")
         if self.drawable is not None and self.visible == True:
             self.drawable.draw(screen, offset)
 

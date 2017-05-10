@@ -28,12 +28,14 @@ def load_system(file):
         name = section
         dict = {}
         for o in config.options(section):
-            key = section + "." + o
+            key = o
             val = convert(config.get(section, o))
             dict[key] = val
         dict.setdefault(None)
+        print(name, ":",dict)
         texture = try_texture(dict.get("texture"))
-        stellar_body = Planet(None, sys.get_planet(dict.get("target")), dict.get("radius"), texture,
-                              dict.get("angle", 0), dict.get("orbit_period"), dict.get("orbit_distance"))
+        stellar_body = Planet(name, sys.get_planet(dict.get("target")), dict.get("radius"), texture,
+                              dict.get("angle", 0), dict.get("orbit_period",0), dict.get("orbit_distance",0))
         sys.add_planet(name, stellar_body)
-    return sys
+    return list(sys.planets.values())
+

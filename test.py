@@ -1,7 +1,7 @@
 import pygame
 pygame.init()
 screen = pygame.display.set_mode((300, 300), False)
-from assets import load_assets, load_configs
+from assets import load_assets, load_configs, _systems_path, get_path
 load_configs()
 load_assets()
 print("Passed Configs and Assets")
@@ -29,3 +29,11 @@ print("Passed Projectile")
 from entity.ship import SpaceShip
 ship = SpaceShip(None, (0,0))
 print("Passed Player")
+
+from system_loader import load_system
+
+url = get_path(_systems_path + "sol.sys")
+system = load_system(url)
+for key in system.planets.keys():
+    planet = system.get_planet(key)
+    print (planet.name,":",planet.radius)

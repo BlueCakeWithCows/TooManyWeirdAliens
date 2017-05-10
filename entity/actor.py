@@ -167,6 +167,8 @@ class Drawable:
         self._position = position
 
     def draw(self, screen, camera_offset=(0, 0)):
+        if self.image is None:
+            return
         if self.ignore_offset:
             x = self.position[0]
             y = self.position[1]

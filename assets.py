@@ -6,6 +6,7 @@ import pygame
 
 _config_path = "data/configs/"
 _assets_path = "data/assets/"
+_systems_path = "data/systems/"
 _assets_config_path = _assets_path + "settings.cfg"
 os.chdir(os.path.dirname(__file__))
 value = {}
@@ -58,6 +59,11 @@ def load_assets():
     print(sound)
     print(font)
 
+def try_texture(key):
+    tex = texture.get(key, None)
+    if tex is None:
+        print("Try texture failed: ", key)
+    return tex
 
 def load_configs():
     config_directory = get_path(_config_path)

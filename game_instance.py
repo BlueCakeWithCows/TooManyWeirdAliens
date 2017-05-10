@@ -8,7 +8,8 @@ import pygame
 from math import pi
 import collision
 from misc import GREEN
-from assets import music, value, texture
+from assets import music, value, texture, _systems_path
+from system_loader import load_system
 
 class Instance(Window):
     day = 0
@@ -22,47 +23,44 @@ class Instance(Window):
         mixer.music.load(music["song1"])
         mixer.music.play(-1)
         self.collision_list = []
-        self.sun = Sun(self)
 
-        mercury = Planet(self, self.sun,value["planet.mercury_radius"],texture["mercury"],value["planet.mercury_angle"],value["planet.mercury_angular_speed"],value["planet.mercury_orbit_distance"])
-        self.create(mercury)
-        self.create(Arrow(self, mercury, GREEN, 1))
-        self.earth = Earth(self, self.sun)
-        self.earth_arrow = Arrow(self, self.earth, GREEN, 1)
         self.ship = SpaceShip(self)
         self.camera.target = self.ship
         self.camera.offset = (-value["init.half_width"], -value["init.half_height"])
         self.create(StarrySky(self))
-        self.create(self.earth)
-        self.create(self.sun)
-        self.create(self.earth_arrow)
-        self.create(self.ship)
-        # self.create(VelocityDisplay)
-        # self.create(CoordsDisplay)
 
-        self.collision_list.append( self.earth)
-        self.collision_list.append( self.ship)
+
+        system = load_system(_systems_path + "sol.sys")
+
+        for p in system:
+            self.create(p)
+            self.create(Arrow(self,p,GREEN,1))
+
 
         # self.update_list.append(Enemy_Spawner.Spawner())
-
-        self.create(Goblin(self, (1300, 200), self.earth))
+        self.create(self.ship)
+        #self.create(Goblin(self, (1300, 200), self.earth))
 
     def create(self, x):
-        if x is not None:
+        if hasattr(x, '__iter__'):
+            for p in x:
+                self.create(p)
+        elif x is not None:
             self.update_list.append(x)
             self.draw_list.append(x)
+            x.instance = self
         else:
             raise ValueError("Cannot add null object to gamelist")
 
     def listen(self, deltaTime):
         collision.update(self.collision_list)
-        self.day = self.day + 365 * (self.earth.angular_speed / (2 * pi)) * deltaTime
+        self.day += deltaTime
 
-        if ((self.ship.health < 1 or self.earth.health < 1) and self.ship in self.update_list):
-            self.update_list.remove(self.ship)
-            # disp = Loss_Display(self.day)
-            # self.draw_list.append(disp)
-            # self.update_list.append(disp)
+        # if ((self.ship.health < 1 """or self.earth.health < 1""") and self.ship in self.update_list):
+        #     self.update_list.remove(self.ship)
+        #     # disp = Loss_Display(self.day)
+        #     # self.draw_list.append(disp)
+        #     # self.update_list.append(disp)
 
     def pass_event(self, event):
         if (event.type == pygame.KEYDOWN):
