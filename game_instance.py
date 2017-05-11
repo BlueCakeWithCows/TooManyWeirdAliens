@@ -47,7 +47,6 @@ class Instance(Window):
                 self.create(p)
         elif x is not None:
             self.update_list.append(x)
-            self.draw_list.append(x)
             x.instance = self
         else:
             raise ValueError("Cannot add null object to gamelist")

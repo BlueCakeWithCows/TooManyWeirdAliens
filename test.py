@@ -1,7 +1,7 @@
 import pygame
 pygame.init()
-screen = pygame.display.set_mode((300, 300), False)
-from assets import load_assets, load_configs, _systems_path, get_path
+screen = pygame.display.set_mode((1920, 1080), False)
+from assets import load_assets, load_configs, _systems_path, get_path, texture
 load_configs()
 load_assets()
 print("Passed Configs and Assets")
@@ -34,6 +34,46 @@ from system_loader import load_system
 
 url = get_path(_systems_path + "sol.sys")
 system = load_system(url)
-for key in system.planets.keys():
-    planet = system.get_planet(key)
-    print (planet.name,":",planet.radius)
+
+
+from pgu import text, gui as pgui
+gui = pgui.App()
+button = pgui.Switch(False)
+font = pygame.font.SysFont("segoe ui", 14)
+font2 = pygame.font.SysFont("segoe ui", 13)
+textArea = pygame.Rect(0, 20, 50, 320)
+
+lo = pgui.Container(width=1920)
+pbl = pgui.Label("Alixorian Xanorth II")
+pbl.set_font(font)
+pbl2 = pgui.Label("37342km")
+pbl2.set_font(font2)
+lo.add(pbl,0,20)
+lo.add(pbl2, 150, 22)
+lo.add(button,130,25)
+selector = pgui.Select()
+selector.add("Blue", 'blue')
+selector.add("Green", 'green')
+print(texture["repair_earth"])
+gun = pgui.Image(texture["repair_earth"])
+selector.add(gun , 'red')
+lo.add(selector, 180, 22)
+
+gui.init(lo)
+Go = True
+
+lines = []
+lines.append('top line of input')
+lines.append('second line of input')
+while Go:
+    for event in pygame.event.get():
+        if event.type ==pygame.QUIT:
+            Go=False
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            Go = False
+        gui.event(event)
+    screen.fill((250, 250, 250))
+    gui.paint(screen)
+    edText = "\n".join(lines)
+    text.writepre(screen, font, textArea, (0, 0, 0), edText)
+    pygame.display.flip()

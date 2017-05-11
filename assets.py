@@ -7,7 +7,7 @@ import pygame
 _config_path = "data/configs/"
 _assets_path = "data/assets/"
 _systems_path = "data/systems/"
-_assets_config_path = _assets_path + "settings.cfg"
+_assets_config_path = _assets_path + "settings/"
 os.chdir(os.path.dirname(__file__))
 value = {}
 texture = {}
@@ -50,10 +50,15 @@ _assets_switch = {"music": _music, "image": _image, "sound": _sound_effect, "fon
 
 def load_assets():
     config = ConfigParser(strict=True)
-    config.read(get_path(_assets_config_path))
+    config_directory = get_path(_assets_config_path)
+    config = ConfigParser()
+    for file in list_dir(config_directory):
+        path = get_path(_assets_config_path + file)
+        config.read(path)
+        for section in config.sections():
+            _assets_switch[config.get(section, "type")](section, dict(config.items(section)))
+        config.clear()
 
-    for section in config.sections():
-        _assets_switch[config.get(section, "type")](section, dict(config.items(section)))
     print(music)
     print(texture)
     print(sound)

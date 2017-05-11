@@ -3,20 +3,22 @@ from misc import add_rectangular, sub_rectangular, scale_rectangular
 from pygame import Rect
 class Window:
     debug = False
-    draw_list = []
     update_list = []
+    gui_list = []
 
     def __init__(self):
         self.camera = Camera(self, None)
 
     def draw(self, screen):
-        for i in self.draw_list:
+        for i in self.update_list:
             if i.is_gui() or self.camera.on_screen(i):
                 i.draw(screen, self.camera.position)
 
         if self.debug:
-            for i in self.draw_list:
+            for i in self.update_list:
                 i.debug_draw(screen, self.camera.position)
+        for i in self.gui_list:
+            i.draw(screen, self.camera.position)
         return
 
     def update(self, deltaTime):
