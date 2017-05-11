@@ -49,7 +49,6 @@ _assets_switch = {"music": _music, "image": _image, "sound": _sound_effect, "fon
 
 
 def load_assets():
-    config = ConfigParser(strict=True)
     config_directory = get_path(_assets_config_path)
     config = ConfigParser()
     for file in list_dir(config_directory):
