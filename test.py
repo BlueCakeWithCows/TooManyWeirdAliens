@@ -34,6 +34,10 @@ from system_loader import load_system
 
 url = get_path(_systems_path + "sol.sys")
 system = load_system(url)
+print(system.system)
+
+from misc import visualise_dict
+visualise_dict(system.system)
 
 
 from pgu import text, gui as pgui

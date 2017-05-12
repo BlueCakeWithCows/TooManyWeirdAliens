@@ -7,6 +7,7 @@ from assets import value, texture
 
 class Planet(Entity):
     def __init__(self, name, target, radius, image, angle, orbit_period, orbit_radius):
+        self.position = (0,0)
         self.name = name
         self.image = image
         self.target = target
