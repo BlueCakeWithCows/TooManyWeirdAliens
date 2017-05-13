@@ -63,8 +63,13 @@ gun = pgui.Image(texture["repair_earth"])
 selector.add(gun , 'red')
 lo.add(selector, 180, 22)
 
-gui.init(lo)
 Go = True
+
+import planet_box
+p = planet_box.Box(system.system)
+p.add_to_gui(lo)
+
+gui.init(lo)
 
 lines = []
 lines.append('top line of input')
@@ -80,4 +85,5 @@ while Go:
     gui.paint(screen)
     edText = "\n".join(lines)
     text.writepre(screen, font, textArea, (0, 0, 0), edText)
+
     pygame.display.flip()

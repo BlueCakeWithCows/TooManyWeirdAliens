@@ -11,6 +11,7 @@ from misc import GREEN
 from assets import music, value, texture, _systems_path
 from system_loader import load_system
 
+
 class Instance(Window):
     day = 0
     earth = None
@@ -29,12 +30,13 @@ class Instance(Window):
         self.camera.offset = (-value["init.half_width"], -value["init.half_height"])
         self.create(StarrySky(self))
 
-
         system = load_system(_systems_path + "sol.sys")
+        self.gui_list.append()
 
-        for p in system:
+        for p in system.system_dict.values():
             self.create(p)
             self.create(Arrow(self,p,GREEN,1))
+
 
 
         # self.update_list.append(Enemy_Spawner.Spawner())
