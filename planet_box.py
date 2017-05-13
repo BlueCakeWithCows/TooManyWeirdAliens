@@ -8,6 +8,7 @@ class Box:
         self.lines = []
         self.update_recursion(self.system)
 
+
     def empty(self):
         self.container.widgets.clear()
 

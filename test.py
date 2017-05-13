@@ -68,7 +68,7 @@ Go = True
 import planet_box
 p = planet_box.Box(system.system)
 p.add_to_gui(lo)
-
+p.update()
 gui.init(lo)
 
 lines = []
