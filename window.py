@@ -1,6 +1,8 @@
 from entity.actor import Entity
 from misc import add_rectangular, sub_rectangular, scale_rectangular
 from pygame import Rect
+from pgu import text, gui as pgui
+from assets import value
 class Window:
     debug = False
     update_list = []
@@ -8,6 +10,10 @@ class Window:
 
     def __init__(self):
         self.camera = Camera(self, None)
+
+        self.gui = pgui.App()
+        self.gui_container = pgui.Container(width=value["init.virtual_width"], height=value["init.virtual_height"])
+        self.gui.init(self.gui_container)
 
     def draw(self, screen):
         for i in self.update_list:
@@ -17,9 +23,24 @@ class Window:
         if self.debug:
             for i in self.update_list:
                 i.debug_draw(screen, self.camera.position)
-        for i in self.gui_list:
-            i.draw(screen, self.camera.position)
+
+        self.gui.paint(screen)
+
         return
+
+    def update_gui(self):
+        self.gui_container.widgets.clear()
+        for i in self.gui_list:
+            x,y = i.position
+            i.add_to_gui(self.gui_container)
+        self.gui.init(self.gui_container)
+    def add_gui(self, element):
+        self.gui_list.append(element)
+        element.add_to_gui(self.gui_container)
+
+    def remove_gui(self, element):
+        self.gui_list.remove(element)
+        element.remove_from_gui(self.gui_container)
 
     def update(self, deltaTime):
         self.listen(deltaTime)
@@ -33,7 +54,7 @@ class Window:
         pass
 
     def pass_event(self, event):
-        pass
+        self.gui.event(event)
 
 
 class Camera(Entity):

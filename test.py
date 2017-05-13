@@ -41,39 +41,43 @@ visualise_dict(system.system)
 
 
 from pgu import text, gui as pgui
+
+
+
+# pbl = pgui.Label("Alixorian Xanorth II")
+# pbl.set_font(font)
+# pbl2 = pgui.Label("37342km")
+# pbl2.set_font(font2)
+# lo.add(pbl,0,20)
+# lo.add(pbl2, 150, 22)
+# lo.add(button,130,25)
+# selector = pgui.Select()
+# selector.add("Blue", 'blue')
+# selector.add("Green", 'green')
+# gun = pgui.Image(texture["repair_earth"])
+# selector.add(gun , 'red')
+# lo.add(selector, 180, 22)
+#
+
+#
+
 gui = pgui.App()
-button = pgui.Switch(False)
-font = pygame.font.SysFont("segoe ui", 14)
-font2 = pygame.font.SysFont("segoe ui", 13)
-textArea = pygame.Rect(0, 20, 50, 320)
-
 lo = pgui.Container(width=1920)
-pbl = pgui.Label("Alixorian Xanorth II")
-pbl.set_font(font)
-pbl2 = pgui.Label("37342km")
-pbl2.set_font(font2)
-lo.add(pbl,0,20)
-lo.add(pbl2, 150, 22)
-lo.add(button,130,25)
-selector = pgui.Select()
-selector.add("Blue", 'blue')
-selector.add("Green", 'green')
-print(texture["repair_earth"])
-gun = pgui.Image(texture["repair_earth"])
-selector.add(gun , 'red')
-lo.add(selector, 180, 22)
-
-Go = True
 
 import planet_box
 p = planet_box.Box(system.system)
 p.add_to_gui(lo)
 p.update()
+
 gui.init(lo)
+
+import planet_box
+
 
 lines = []
 lines.append('top line of input')
 lines.append('second line of input')
+Go = True
 while Go:
     for event in pygame.event.get():
         if event.type ==pygame.QUIT:
@@ -83,7 +87,4 @@ while Go:
         gui.event(event)
     screen.fill((250, 250, 250))
     gui.paint(screen)
-    edText = "\n".join(lines)
-    text.writepre(screen, font, textArea, (0, 0, 0), edText)
-
     pygame.display.flip()

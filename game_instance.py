@@ -10,7 +10,7 @@ import collision
 from misc import GREEN
 from assets import music, value, texture, _systems_path
 from system_loader import load_system
-
+from planet_box import Box
 
 class Instance(Window):
     day = 0
@@ -31,7 +31,10 @@ class Instance(Window):
         self.create(StarrySky(self))
 
         system = load_system(_systems_path + "sol.sys")
-        self.gui_list.append()
+        box =Box(system.system)
+        box.update()
+        self.add_gui(box)
+        self.update_gui()
 
         for p in system.system_dict.values():
             self.create(p)
@@ -64,6 +67,7 @@ class Instance(Window):
         #     # self.update_list.append(disp)
 
     def pass_event(self, event):
+        Window.pass_event(self, event)
         if (event.type == pygame.KEYDOWN):
             if event.key == pygame.K_k:
                 self.debug = not self.debug

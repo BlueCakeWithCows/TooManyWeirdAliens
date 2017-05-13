@@ -1,9 +1,11 @@
 from pgu import gui as pgui
-from assets import font
+from assets import font, texture
+from misc import WHITE
 class Box:
 
     def __init__(self, system):
-        self.container = pgui.Container(width=500, height =600)
+        self.container = pgui.Container(width=350, height =600)
+        self.position=1550,80
         self.system = system
         self.lines = []
         self.update_recursion(self.system)
@@ -13,21 +15,20 @@ class Box:
         self.container.widgets.clear()
 
     def update(self):
-        print("yada")
         self.empty()
 
         y = 0
         x = 0
         for line in self.lines:
             if line.parent is None or line.parent.can_drop_down():
-                y = y + 20
-                x = 15 *line.depth
+                y = y + 26
+                x = 18 *line.depth
                 line.add_gui(self.container, x, y)
 
 
 
     def add_to_gui(self, gui):
-        gui.add(self.container, 100, 100)
+        gui.add(self.container, self.position[0], self.position[1])
 
     def remove_from_gui(self, gui):
         gui.remove(self)
@@ -41,6 +42,9 @@ class Box:
             new_parent.depth = depth
             new_parent.parent = parent
             new_parent.update()
+            if parent is not None:
+                parent.has_child = True
+
             parent = new_parent
             self.lines.append(new_parent)
         for key in list(my_dict.keys()):
@@ -61,9 +65,12 @@ class Line:
         self.color = "Red"
         self.target = None
         self.label = "Null"
+        self.has_child = False
         self.drop_down_visible = True
 
         self.drop_down_box = pgui.Switch({'value':True,'width':5, 'height':5})
+        self.drop_down_box.style.off = texture["gray_triangle_off"]
+        self.drop_down_box.style.on = texture["gray_triangle_on"]
         self.drop_down_box.resize(100,100)
 
         def change_visiblity(value):
@@ -72,6 +79,8 @@ class Line:
 
         self.drop_down_box.connect(pgui.CLICK, change_visiblity, None)
         self.name_box = pgui.Label(self.label)
+        self.name_box.set_font(font["ui_font_1"])
+        self.name_box.style.color = WHITE
 
 
 
@@ -82,9 +91,10 @@ class Line:
     def update(self):
         self.name_box.set_text(self.label)
 
-    def add_gui(self, gui, x ,y ):
-        gui.add(self.drop_down_box, x + 90, y)
-        gui.add(self.name_box, x, y)
+    def add_gui(self, gui, x ,y):
+        if self.has_child:
+            gui.add(self.drop_down_box,  x, y)
+        gui.add(self.name_box, x+30, y)
 
     def can_drop_down(self):
         p = self
@@ -93,7 +103,6 @@ class Line:
                 return False
             p = p.parent
         return True
-
 
     def draw(self, screen):
         self.drop_down_box.paint()
