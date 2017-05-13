@@ -68,10 +68,14 @@ class Line:
         self.has_child = False
         self.drop_down_visible = True
 
-        self.drop_down_box = pgui.Switch({'value':True,'width':5, 'height':5})
+        self.drop_down_box = pgui.Switch({'value':True})
         self.drop_down_box.style.off = texture["gray_triangle_off"]
         self.drop_down_box.style.on = texture["gray_triangle_on"]
-        self.drop_down_box.resize(100,100)
+
+        self.arrow_check = pgui.Switch({'value': True})
+        # self.arrow_check.style.off = texture["gray_triangle_off"]
+        # self.arrow_check.style.on = texture["gray_triangle_on"]
+
 
         def change_visiblity(value):
             self.drop_down_visible = not self.drop_down_box.value
@@ -94,6 +98,8 @@ class Line:
     def add_gui(self, gui, x ,y):
         if self.has_child:
             gui.add(self.drop_down_box,  x, y)
+        if self.target is not None:
+            gui.add(self.arrow_check, x + 190 - self.depth * 18, y + 10)
         gui.add(self.name_box, x+30, y)
 
     def can_drop_down(self):
