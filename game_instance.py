@@ -77,5 +77,4 @@ class Instance(Window):
                 pygame.event.post(pygame.event.Event(pygame.QUIT))
 
     def remove(self, o):
-        if o in self.draw_list: self.draw_list.remove(o)
         if o in self.update_list: self.update_list.remove(o)

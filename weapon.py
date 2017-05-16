@@ -88,11 +88,15 @@ class StraightLineProjectile(Entity):
 
     def create(self):
         self.drawable = copy.copy(self.drawable)
-
+    test = True
+    bullet_duration = 60
+    timer = 0
     def update(self, delta_time):
         Entity.update(self, delta_time)
         self.image_rotation = self.velocity_polar[1]
-
+        self.timer = self.timer + delta_time
+        if self.timer > self.bullet_duration:
+            self.instance.remove(self)
 
 
 
@@ -103,13 +107,10 @@ def create_bullet_templates():
     player_basic.speed = 300
     player_basic.damage = 13
     player_basic.radius = 4
+    player_basic.bullet_duration = 5
     player_basic.image = texture["bottle_rocket"]
     projectile["player_basic"] = player_basic
     print("Projectiles: ", projectile)
-
-
-
-projectile = {}
 
 
 if __name__ == '__main__':
