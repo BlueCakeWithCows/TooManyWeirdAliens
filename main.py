@@ -28,30 +28,30 @@ from weapon import create_bullet_templates
 create_bullet_templates()
 virtual_screen = pygame.transform.scale(screen.copy(), (value["init.virtual_width"], value["init.virtual_height"]))
 running = True
-
 game_screen = Instance()
-
-getTicksLastFrame = pygame.time.get_ticks()
-
 v_ratio = value["init.virtual_width"]/value["init.virtual_height"]
-while running:
 
 
-    # deltaTime in seconds.
-    deltaTime = 0
-    while deltaTime == 0:
-        t = pygame.time.get_ticks()
-        deltaTime = (t - getTicksLastFrame) / 1000.0
+def update(dt):
+    game_screen.update(dt)
 
-    getTicksLastFrame = t
-    #print (1/deltaTime)
-    game_screen.update(deltaTime)
+    for event in pygame.event.get():
+        global running
+        if event.type == pygame.QUIT:
+            running = False
+
+        # if event.type == pygame.VIDEORESIZE and not pygame.FULLSCREEN:
+        #     global surface
+        #     surface = pygame.display.set_mode((event.w, event.h),
+        #                                       pygame.RESIZABLE)
+        game_screen.pass_event(event)
+
+
+def draw(dt):
     virtual_screen.fill(BLACK)
     game_screen.draw(virtual_screen)
     x, y = screen.get_size()
     ratio = x / y
-    size = 0, 0
-    pos = 0, 0
     if ratio < v_ratio:
         size = x, x / v_ratio
         pos = 0, (y - size[1]) / 2
@@ -64,18 +64,33 @@ while running:
         temp_screen = pygame.transform.scale(virtual_screen, size)
     else:
         temp_screen = virtual_screen
-    #temp_screen = temp_screen.convert()
-    #screen.fill(BLACK)
+    # temp_screen = temp_screen.convert()
+    # screen.fill(BLACK)
     screen.blit(temp_screen, pos)
 
     pygame.display.flip()
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.VIDEORESIZE and not pygame.FULLSCREEN:
-            surface = pygame.display.set_mode((event.w, event.h),
-                                             pygame.RESIZABLE)
-        game_screen.pass_event(event)
+
+last_time = pygame.time.get_ticks()
+accumulated_time = 0
+dtms= 16
+dt = dtms/1000
+while running:
+    #delta milli seconds
+    time= pygame.time.get_ticks()
+    dms = time - last_time
+    accumulated_time += dms
+    last_time = time
+    
+    #update every 16 ms
+    if accumulated_time >= dtms:
+        accumulated_time -= dtms
+        update(dt)
+
+        #skip frame if needed
+        if accumulated_time <dtms:
+            draw(dt)
+        # else:
+        #     print("Frame skipped")
 
 pygame.quit()
