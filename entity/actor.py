@@ -1,5 +1,7 @@
 from misc import to_polar, to_rectangular, pythag_distance, GREEN, add_rectangular, scale_rectangular
 from pygame import draw, Rect
+import pygame
+from math import pi
 
 
 # Class should be done 4/24/2017
@@ -14,6 +16,23 @@ class Entity:
     health = None
     arrow = None
     instance = None
+    auto_handle_image_rotatation = True
+    _current_rotation_image = 0
+    _image_rotation = 0
+    image = None
+
+    @property
+    def image_rotation(self):
+        return self._image_rotation
+    @image_rotation.setter
+    def image_rotation(self, value):
+        self._image_rotation = value
+        if self.auto_handle_image_rotatation:
+            if self._current_rotation_image is not self._image_rotation and self.image is not None and Drawable is not None:
+                self.drawable.image = pygame.transform.rotate(self.image, -180 / pi * self._image_rotation)
+                self._current_rotation_image = self._image_rotation
+
+
 
     # Position and velocity are initilizaed to 0,0 in order to be more forgiving in execution order, ie create image
     # then set position vs other way around
@@ -24,7 +43,7 @@ class Entity:
     # Auto calculates velocity polar - Same is not included for position due to infrequent (never?) use
     # Radius is soley used for debug drawing, may be implemented in sub classes for collisions
 
-    def __init__(self, instance):
+    def __init__(self, instance = None):
         self.instance = instance
         self.create_drawable()
 

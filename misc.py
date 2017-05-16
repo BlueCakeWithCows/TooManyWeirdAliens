@@ -116,6 +116,7 @@ def shift(direction, number, matrix):
 
 BLUE = 0, 0, 255
 BLACK = 0, 0, 0
+LIGHT_GRAY = 100,200,200
 RED = 255, 0, 0
 GREEN = 0, 255, 0
 YELLOW = 255, 255, 0

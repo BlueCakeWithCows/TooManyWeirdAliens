@@ -45,7 +45,6 @@ class Arrow(Entity):
         self.scale = size
         self.color = color
         self.target = target
-        self.camera = instance.camera
         self.base_image = None
 
         self.ARROW_AXIS_LEFT = value["arrow.left_axis"]
@@ -67,13 +66,16 @@ class Arrow(Entity):
         self.drawable = Drawable(self.base_image.copy(), self.position, True, True)
 
     def update_image(self):
-        if self.instance.camera.point_on_screen(self.target.position):
-            self.visible = False
+        if self.instance is None:
             return
-        self.visible = True
+
+        if  self.instance.camera.point_on_screen(self.target.position):
+            self.on_screen = False
+            return
+        self.on_screen = True
 
         distance, angle = distance_and_angle(
-            (self.camera.x + value["init.half_width"], self.camera.y + value["init.half_height"]),
+            (self.instance.camera.x + value["init.half_width"], self.instance.camera.y + value["init.half_height"]),
             (self.target.x, self.target.y))
 
         angle = -angle
@@ -123,7 +125,7 @@ class Arrow(Entity):
     def update(self, delta_time):
         self.update_image()
     def draw(self, screen, offset):
-        if self.drawable is not None and self.visible == True:
+        if self.drawable is not None and self.visible and self.on_screen:
             self.drawable.draw(screen, offset)
 
 class StarrySky(Entity):
@@ -171,6 +173,7 @@ class StarrySky(Entity):
 
 
     def draw(self, screen, offset):
+
         camera_x, camera_y = self.instance.camera.position
         start_x, start_y = floor(camera_x / self.d) - 1, floor(camera_y / self.d)
 

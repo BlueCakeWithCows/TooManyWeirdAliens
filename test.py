@@ -1,6 +1,14 @@
 import pygame
+import os
+import ctypes
+ctypes.windll.user32.SetProcessDPIAware()
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
 pygame.init()
-screen = pygame.display.set_mode((1920, 1080), False)
+from pygame.locals import *
+flags = NOFRAME| DOUBLEBUF
+#resolution = (value["init.window_width"], value["init.window_height"])
+screen = pygame.display.set_mode((0,0), flags)
+print(screen)
 from assets import load_assets, load_configs, _systems_path, get_path, texture
 load_configs()
 load_assets()
@@ -59,19 +67,20 @@ from pgu import text, gui as pgui
 # lo.add(selector, 180, 22)
 #
 
-#
+import my_gui
 
 gui = pgui.App()
-lo = pgui.Container(width=1920)
-
-import planet_box
-p = planet_box.Box(system.system)
+lo = pgui.Container(width=1920, height=1080)
+img = my_gui.InfoBlock()
+img.add_to_gui(lo)
+import my_gui
+p = my_gui.Box(system.system)
+p.position = 100,100
 p.add_to_gui(lo)
 p.update()
-
 gui.init(lo)
 
-import planet_box
+
 
 
 lines = []

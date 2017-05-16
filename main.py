@@ -24,6 +24,8 @@ screen = pygame.display.set_mode((0,0), flags)
 print(pygame.display.Info())
 pygame.display.set_caption('Too Many Weird Aliens')
 load_assets()
+from weapon import create_bullet_templates
+create_bullet_templates()
 virtual_screen = pygame.transform.scale(screen.copy(), (value["init.virtual_width"], value["init.virtual_height"]))
 running = True
 
