@@ -202,7 +202,7 @@ class WeaponBar:
             button = pgui.Radio(self.button_group, i, width=100, height=100)
             button.style.width = 128
             button.style.height= 128
-            print(button.__sizeof__())
+            button.focusable = False
             self.container.add(button, i * 143, 0)
             self.weapon_slot[i] = None
             self.__setattr__("button%s" % i, button)
@@ -210,7 +210,6 @@ class WeaponBar:
         def switch_weapon(value):
             key = value.value
             if self.ship is not None:
-                print(self.weapon_slot)
                 self.ship.weapon = self.weapon_slot[key]
 
         self.button_group.connect(pgui.CHANGE, switch_weapon, self.button_group)
@@ -219,7 +218,7 @@ class WeaponBar:
 
     def select(self, key):
      weapon_button = self.__getattribute__("button%s" % key)
-     ##self.ship.weapon = self.weapon_slot[key]
+     self.button_group.value = weapon_button.value
      weapon_button.click()
 
     #Set proper icons and shit
@@ -254,10 +253,10 @@ class HealthBar:
 
         self.button_group = pgui.Group()
         for i in range(3):
-            button = pgui.Radio(self.button_group, i, width=100, height=100)
+            button = pgui.Radio(self.button_group, i)
             button.style.width = 128
             button.style.height= 128
-            print(button.__sizeof__())
+            button.focusable = False
             self.container.add(button, i * 143, 0)
             self.weapon_slot[i] = None
             self.__setattr__("button%s" % i, button)
@@ -265,7 +264,6 @@ class HealthBar:
         def switch_weapon(value):
             key = value.value
             if self.ship is not None:
-                print(self.weapon_slot)
                 self.ship.weapon = self.weapon_slot[key]
 
         self.button_group.connect(pgui.CHANGE, switch_weapon, self.button_group)

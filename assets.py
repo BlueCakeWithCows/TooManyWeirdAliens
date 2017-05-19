@@ -26,6 +26,9 @@ def _image(name, options):
         image = pygame.transform.scale(image, (width, height))
     if "rotation" in options:
         image = pygame.transform.rotate(image, convert(options["rotation"]))
+    if "no_alpha" in options:
+        if convert(options["no_alpha"]):
+            image=image.convert()
     texture[name] = image
 
 

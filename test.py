@@ -11,10 +11,9 @@ screen = pygame.display.set_mode((0,0), flags)
 print(screen)
 from assets import load_assets, load_configs, _systems_path, get_path, texture
 load_configs()
-load_assets()
+load_assets(screen)
 print("Passed Configs and Assets")
 from weapon import create_bullet_templates
-import weapon
 create_bullet_templates()
 
 from entity.powerup import EarthHealPack, HealthPack
@@ -81,16 +80,28 @@ p = my_gui.Box(system.system)
 p.position = 100,100
 p.add_to_gui(lo)
 p.update()
+container = pgui.Container(width=300, height=100)
+container.focusable = False
+gah = pgui.Group()
 
-wp_bar = my_gui.WeaponBar()
-wp_bar.position = 400,400
-wp_bar.weapon_slot["0"] = weapon.BasicKineticWeapon()
-wp_bar.update()
-wp_bar.add_to_gui(lo)
+radio_button = pgui.Radio(gah, 'Blue')
+radio_button_2 = pgui.Radio(gah, 'Red')
+radio_button_3 = pgui.Radio(gah, 'Yellow Mofof')
+radio_button.focusable = False
+radio_button_2.focusable = False
+radio_button_3.focusable = False
+container.add(radio_button,100,100)
+container.add(radio_button_2,200,100)
+container.add(radio_button_3, 300, 100)
+container.focus(radio_button_3)
+lo.add(container,0,0)
 
 def change_visiblity(value):
     print(value.value)
     print("yolo")
+
+
+gah.connect(pgui.CHANGE, change_visiblity, gah)
 
 gui.init(lo)
 
