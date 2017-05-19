@@ -1,13 +1,11 @@
+#configs first
 from assets import value, load_configs,load_assets
-
 load_configs()
-import pygame.transform
+
+#setup display
 import pygame
 import os
 import ctypes
-from game_instance import Instance
-
-from misc import BLACK
 
 ctypes.windll.user32.SetProcessDPIAware()
 
@@ -23,7 +21,18 @@ flags = NOFRAME| DOUBLEBUF
 screen = pygame.display.set_mode((0,0), flags)
 print(pygame.display.Info())
 pygame.display.set_caption('Too Many Weird Aliens')
-load_assets()
+
+#load assets for display
+load_assets(screen)
+import pygame.transform
+
+
+from game_instance import Instance
+
+from misc import BLACK
+
+
+
 from weapon import create_bullet_templates
 create_bullet_templates()
 virtual_screen = pygame.transform.scale(screen.copy(), (value["init.virtual_width"], value["init.virtual_height"]))
@@ -46,6 +55,7 @@ def update(dt):
         #                                       pygame.RESIZABLE)
         game_screen.pass_event(event)
 
+virtual_screen = virtual_screen.convert(screen)
 
 def draw(dt):
     virtual_screen.fill(BLACK)
@@ -64,6 +74,7 @@ def draw(dt):
         temp_screen = pygame.transform.scale(virtual_screen, size)
     else:
         temp_screen = virtual_screen
+
     # temp_screen = temp_screen.convert()
     # screen.fill(BLACK)
     screen.blit(temp_screen, pos)
@@ -75,22 +86,37 @@ last_time = pygame.time.get_ticks()
 accumulated_time = 0
 dtms= 16
 dt = dtms/1000
+
+frames=0
+frames_skipped= 0
+fps_timer = 0
 while running:
     #delta milli seconds
     time= pygame.time.get_ticks()
     dms = time - last_time
     accumulated_time += dms
     last_time = time
-    
+
+    fps_timer += dms
     #update every 16 ms
     if accumulated_time >= dtms:
+        frames+=1
         accumulated_time -= dtms
         update(dt)
 
         #skip frame if needed
         if accumulated_time <dtms:
+            pass
             draw(dt)
-        # else:
-        #     print("Frame skipped")
+        else:
+            frames_skipped+=1
+
+
+    if fps_timer>1000:
+        fps_timer =- 1000
+        avg_fps = 62.5 - frames_skipped / frames * 62.5
+        frames_skipped = 0
+        frames = 0
+        print("avg fps = ", avg_fps)
 
 pygame.quit()

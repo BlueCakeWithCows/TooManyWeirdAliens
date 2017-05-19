@@ -31,12 +31,12 @@ class SpaceShip(Entity):
         self.deacceleration = value["ship.deacceleration"]
         self.auto_deacceleration = value["ship.auto_deacceleration"]
         self.angular_speed = value["ship.rotation_speed"]
+        self.side_acceleration = value["ship.thruster_acceleration"]
         self.acceleration = value["ship.acceleration"]
         self.max_speed = value["ship.max_speed"]
 
 
-        self.weapon = weapon_class.BasicKineticWeapon()
-        self.weapon.projectile_template = weapon_class.projectile["player_basic"]
+        self.weapon = weapon_class.TripleBasicKineticWeapon()
 
     def create_drawable(self):
         self.drawable = Drawable(texture["ship"], (0, 0), False, True)
@@ -60,25 +60,35 @@ class SpaceShip(Entity):
         self.k_down = keys[pygame.K_DOWN] or keys[pygame.K_s]
         self.k_right = keys[pygame.K_RIGHT] or keys[pygame.K_d]
         self.k_left = keys[pygame.K_LEFT] or keys[pygame.K_a]
+        self.k_strafe_left = keys[pygame.K_q]
+        self.k_strafe_right = keys[pygame.K_e]
 
     def calculate_new_velocity(self, delta_time):
-        delta_v = 0,0
         current_v, current_v_angle = self.velocity_polar
 
-        if self.k_down:
-            velocity = max(current_v - self.deacceleration * delta_time, 0), current_v_angle
-        else:
-            velocity = max(current_v - self.auto_deacceleration * delta_time, 0), current_v_angle
+        # if self.k_down:
+        #     velocity = max(current_v - self.deacceleration * delta_time, 0), current_v_angle
+        # else:
+        #     velocity = max(current_v - self.auto_deacceleration * delta_time, 0), current_v_angle
 
         if self.k_left:
             self.direction -= delta_time * self.angular_speed
         if self.k_right:
             self.direction += delta_time * self.angular_speed
 
+        velocity = 0,0
+        if self.k_strafe_right:
+            delta_v = self.side_acceleration * delta_time, self.direction + pi/2
+            velocity = add_polar(velocity, delta_v)
+        if self.k_strafe_left:
+            delta_v = self.side_acceleration * delta_time, self.direction - pi/2
+            velocity = add_polar(velocity, delta_v)
+
         if self.k_up:
             delta_v = self.acceleration * delta_time, self.direction
-            velocity = add_polar(self.velocity_polar, delta_v)
+            velocity = add_polar(velocity, delta_v)
 
+        velocity = add_polar(velocity, self.velocity_polar)
         velocity = min_polar(velocity, self.max_speed)
 
         self.velocity_polar = velocity
@@ -98,6 +108,7 @@ class SpaceShip(Entity):
     cooldown = 0
 
     def fire(self, delta_time):
-        self.weapon.update(delta_time)
-        if self.k_fire:
-            self.weapon.fire(self, None)
+        if self.weapon is not None:
+            self.weapon.update(delta_time)
+            if self.k_fire:
+                self.weapon.fire(self, None)

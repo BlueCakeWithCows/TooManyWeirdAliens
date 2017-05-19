@@ -27,7 +27,7 @@ radius=160
 orbit_distance=1300
 angle=0
 orbit_period=29.37
-texture=
+texture=moon
 target=earth
 [mars]
 radius=320

@@ -32,6 +32,9 @@ class Entity:
                 self.drawable.image = pygame.transform.rotate(self.image, -180 / pi * self._image_rotation)
                 self._current_rotation_image = self._image_rotation
 
+    def force_update_image_rotation(self):
+        self.drawable.image = pygame.transform.rotate(self.image, -180 / pi * self._image_rotation)
+        self._current_rotation_image = self._image_rotation
 
 
     # Position and velocity are initilizaed to 0,0 in order to be more forgiving in execution order, ie create image

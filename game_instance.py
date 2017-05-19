@@ -10,7 +10,8 @@ import collision
 from misc import GREEN
 from assets import music, value, texture, _systems_path
 from system_loader import load_system
-from my_gui import Box, InfoBlock
+from my_gui import Box, InfoBlock, WeaponBar
+import weapon
 
 class Instance(Window):
     day = 0
@@ -36,12 +37,19 @@ class Instance(Window):
         self.add_gui(box)
         #None will be replaced with self after fully implemented.
         self.add_gui(InfoBlock(None))
+        self.weapon_bar = WeaponBar(self.ship)
+        self.add_gui(self.weapon_bar)
+
+        self.weapon_bar.weapon_slot[0] = weapon.BasicKineticWeapon()
+        self.weapon_bar.weapon_slot[1] = weapon.TripleBasicKineticWeapon()
+        self.weapon_bar.select(0)
+        self.weapon_bar.update()
         self.update_gui()
 
         for p in system.system_dict.values():
             self.create(p)
 
-
+        self.ship.position = 12000,0
 
         # self.update_list.append(Enemy_Spawner.Spawner())
         self.create(self.ship)
@@ -75,6 +83,12 @@ class Instance(Window):
                 print("Debug Toggle to ", self.debug)
             if event.key == pygame.K_ESCAPE:
                 pygame.event.post(pygame.event.Event(pygame.QUIT))
+            if event.key == pygame.K_1:
+                self.weapon_bar.select(0)
+            if event.key == pygame.K_2:
+                self.weapon_bar.select(1)
+            if event.key == pygame.K_3:
+                self.weapon_bar.select(2)
 
     def remove(self, o):
         if o in self.update_list: self.update_list.remove(o)

@@ -7,7 +7,7 @@ class Weapon:
 
     def __init__(self):
         self.properties = {}
-        self.timer = 1
+        self.timer = 0
         empty_icon = texture["weapon0_icon"]
 
 
@@ -54,10 +54,11 @@ class BasicKineticWeapon(Weapon):
 
     def __init__(self):
         Weapon.__init__(self)
-        self.cooldown = 3
+        self.cooldown = 2
         self.icon = texture["weapon1_icon"]
         self.trigger_sound = sound["player_fire_sound"]
         self.automatic = True
+        self.projectile_template = projectile["player_basic"]
 
     def fire(self, launcher, target):
             if self.timer > 0:
@@ -65,18 +66,33 @@ class BasicKineticWeapon(Weapon):
             self.timer = self.cooldown
 
             self.trigger_sound.play()
+            self.launch_projectile(launcher, launcher.direction)
 
-            p = copy.copy(self.projectile_template)
-            print(p)
-            print(launcher)
-            p.position = launcher.position
-            p.velocity_polar = add_polar(launcher.velocity_polar, (p.speed, launcher.direction))
-            p.rotation = launcher.direction
-            p.create()
-            launcher.instance.create(p)
+    def launch_projectile(self, launcher, direction):
+        p = copy.copy(self.projectile_template)
+        p.position = launcher.position
+        p.velocity_polar = add_polar(launcher.velocity_polar, (p.speed, direction))
+        p.rotation = direction
+        p.create()
+        launcher.instance.create(p)
 
-    def update(self, delta_time):
-        self.timer = self.timer - delta_time
+
+class TripleBasicKineticWeapon(BasicKineticWeapon):
+    def __init__(self):
+        BasicKineticWeapon.__init__(self)
+        self.cooldown=.3
+
+    def fire(self, launcher, target):
+        if self.timer > 0:
+            return
+        self.timer = self.cooldown
+
+        self.trigger_sound.play()
+        self.launch_projectile(launcher, launcher.direction-.2)
+        self.launch_projectile(launcher, launcher.direction)
+        self.launch_projectile(launcher, launcher.direction+.2)
+
+
 
 class StraightLineProjectile(Entity):
 
@@ -88,12 +104,15 @@ class StraightLineProjectile(Entity):
 
     def create(self):
         self.drawable = copy.copy(self.drawable)
+        self.image_rotation = self.rotation
+        #self.force_update_image_rotation()
+
     test = True
     bullet_duration = 60
     timer = 0
     def update(self, delta_time):
         Entity.update(self, delta_time)
-        self.image_rotation = self.velocity_polar[1]
+        #self.image_rotation = self.velocity_polar[1]
         self.timer = self.timer + delta_time
         if self.timer > self.bullet_duration:
             self.instance.remove(self)

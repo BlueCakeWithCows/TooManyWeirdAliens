@@ -13,6 +13,9 @@ from assets import load_assets, load_configs, _systems_path, get_path, texture
 load_configs()
 load_assets()
 print("Passed Configs and Assets")
+from weapon import create_bullet_templates
+import weapon
+create_bullet_templates()
 
 from entity.powerup import EarthHealPack, HealthPack
 earth_pack = EarthHealPack(None, (32, 32), False)
@@ -78,6 +81,17 @@ p = my_gui.Box(system.system)
 p.position = 100,100
 p.add_to_gui(lo)
 p.update()
+
+wp_bar = my_gui.WeaponBar()
+wp_bar.position = 400,400
+wp_bar.weapon_slot["0"] = weapon.BasicKineticWeapon()
+wp_bar.update()
+wp_bar.add_to_gui(lo)
+
+def change_visiblity(value):
+    print(value.value)
+    print("yolo")
+
 gui.init(lo)
 
 

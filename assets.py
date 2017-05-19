@@ -15,10 +15,11 @@ sound = {}
 music = {}
 font = {}
 
+__screen = None
 
 def _image(name, options):
     path = get_path(_assets_path + options["url"])
-    image = pygame.image.load(path).convert_alpha()
+    image = pygame.image.load(path).convert_alpha(__screen)
     if "width" in options:
         width = convert(options["width"])
         height = convert(options["height"])
@@ -47,8 +48,9 @@ def _font(name, options):
 # map the inputs to the function blocks
 _assets_switch = {"music": _music, "image": _image, "sound": _sound_effect, "font": _font}
 
-
-def load_assets():
+def load_assets(screen=None):
+    global __screen
+    __screen = screen
     config_directory = get_path(_assets_config_path)
     config = ConfigParser()
     for file in list_dir(config_directory):

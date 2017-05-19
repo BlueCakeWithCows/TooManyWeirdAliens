@@ -1,7 +1,9 @@
 from pgu import gui as pgui
+import pygame
 from assets import font, texture
 from misc import WHITE, GREEN, LIGHT_GRAY
 from entity.display import Arrow
+import copy
 class Box:
 
     def __init__(self, system, instance = None):
@@ -191,15 +193,106 @@ class WeaponBar:
     def __init__(self, ship = None):
         self.ship = ship
         self.container = pgui.Container(width=300, height=100)
-        self.position = 1620, 0
+        self.position = 15,15
         #List of 3 null slots
-        self.weapon_slot = [None,None,None]
-        self.container.add(pgui.Image(texture["stat_block_background"]), 0,0)
+        self.weapon_slot = {}
+
+        self.button_group = pgui.Group()
+        for i in range(3):
+            button = pgui.Radio(self.button_group, i, width=100, height=100)
+            button.style.width = 128
+            button.style.height= 128
+            print(button.__sizeof__())
+            self.container.add(button, i * 143, 0)
+            self.weapon_slot[i] = None
+            self.__setattr__("button%s" % i, button)
+
+        def switch_weapon(value):
+            key = value.value
+            if self.ship is not None:
+                print(self.weapon_slot)
+                self.ship.weapon = self.weapon_slot[key]
+
+        self.button_group.connect(pgui.CHANGE, switch_weapon, self.button_group)
 
         self.update()
 
+    def select(self, key):
+     weapon_button = self.__getattribute__("button%s" % key)
+     ##self.ship.weapon = self.weapon_slot[key]
+     weapon_button.click()
+
+    #Set proper icons and shit
     def update(self):
-        pass
+        for key in self.weapon_slot.keys():
+            weapon_button = self.__getattribute__("button%s" % key)
+            if self.weapon_slot.get(key) is None:
+                weapon_button.style.on = self.highlighted_icon(texture["weapon0_icon"])
+                weapon_button.style.off = texture["weapon0_icon"]
+            else:
+                weapon = self.weapon_slot.get(key)
+                weapon_button.style.on = self.highlighted_icon(weapon.icon)
+                weapon_button.style.off = weapon.icon
+
+    def highlighted_icon(self, my_tex):
+        new_tex= my_tex.copy()
+        new_tex.blit(texture["weapon_highlight"], (0,0))
+        return new_tex
+
+    def add_to_gui(self, gui):
+        gui.add(self.container, self.position[0], self.position[1])
+
+
+class HealthBar:
+
+
+    def __init__(self, ship = None):
+        self.ship = ship
+        self.container = pgui.Container(width=300, height=100)
+        self.position = 15,165
+        #List of 3 null slots
+
+        self.button_group = pgui.Group()
+        for i in range(3):
+            button = pgui.Radio(self.button_group, i, width=100, height=100)
+            button.style.width = 128
+            button.style.height= 128
+            print(button.__sizeof__())
+            self.container.add(button, i * 143, 0)
+            self.weapon_slot[i] = None
+            self.__setattr__("button%s" % i, button)
+
+        def switch_weapon(value):
+            key = value.value
+            if self.ship is not None:
+                print(self.weapon_slot)
+                self.ship.weapon = self.weapon_slot[key]
+
+        self.button_group.connect(pgui.CHANGE, switch_weapon, self.button_group)
+
+        self.update()
+
+    def select(self, key):
+     weapon_button = self.__getattribute__("button%s" % key)
+     ##self.ship.weapon = self.weapon_slot[key]
+     weapon_button.click()
+
+    #Set proper icons and shit
+    def update(self):
+        for key in self.weapon_slot.keys():
+            weapon_button = self.__getattribute__("button%s" % key)
+            if self.weapon_slot.get(key) is None:
+                weapon_button.style.on = self.highlighted_icon(texture["weapon0_icon"])
+                weapon_button.style.off = texture["weapon0_icon"]
+            else:
+                weapon = self.weapon_slot.get(key)
+                weapon_button.style.on = self.highlighted_icon(weapon.icon)
+                weapon_button.style.off = weapon.icon
+
+    def highlighted_icon(self, my_tex):
+        new_tex= my_tex.copy()
+        new_tex.blit(texture["weapon_highlight"], (0,0))
+        return new_tex
 
     def add_to_gui(self, gui):
         gui.add(self.container, self.position[0], self.position[1])
