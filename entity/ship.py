@@ -36,7 +36,7 @@ class SpaceShip(Entity):
         self.angular_speed = value["ship.rotation_speed"]
         self.side_acceleration = value["ship.thruster_acceleration"]
         self.acceleration = value["ship.acceleration"]
-        self.max_speed = value["ship.max_speed"]
+        self.max_velocity = value["ship.max_speed"]
 
 
         self.weapon = weapon_class.TripleBasicKineticWeapon()
@@ -92,7 +92,7 @@ class SpaceShip(Entity):
             velocity = add_polar(velocity, delta_v)
 
         velocity = add_polar(velocity, self.velocity_polar)
-        velocity = min_polar(velocity, self.max_speed)
+        velocity = min_polar(velocity, self.max_velocity)
 
         self.velocity_polar = velocity
 

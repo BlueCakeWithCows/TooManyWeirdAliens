@@ -192,7 +192,6 @@ class InfoBlock:
             surf = pygame.Surface((width, 74),pygame.SRCALPHA,32)
             surf.blit(texture["fuel_overlay"],(0,0))
             self.label_fuel.value = surf
-            print("yo")
 
     def add_to_gui(self, gui):
         gui.add(self.container, self.position[0], self.position[1])
@@ -284,3 +283,42 @@ class HealthBar:
     def add_to_gui(self, gui):
         gui.add(self.container, self.position[0], self.position[1])
 
+
+class MiniMap():
+
+
+    def __init__(self, ship=None):
+        self.ship = ship
+        self.position = 1500, 705
+        self.container = pgui.Container(width=300, height=100)  # any fixed value works
+
+        self.minimap_icon = pgui.Image(texture["minimap"])
+        self.container.add(self.minimap_icon, 0 ,0)
+        self.targets = []
+
+        self.button = pgui.Image(texture["minimap_button"])
+        def button_code(value):
+            print("pressed! minimap button")
+        self.button.connect(pgui.CLICK, button_code, None)
+        self.container.add(self.button, 285,232)
+
+        self.last_velocity=-1
+        blank_velocity_surface = pygame.Surface((90,263))
+        self.velocity_shader = pgui.Image(blank_velocity_surface)
+        self.container.add(self.velocity_shader, 7, 37)
+
+        self.update()
+
+    # Set proper icons and shit
+    def update(self):
+        percent_max = self.ship.velocity_polar[0] / self.ship.max_velocity
+
+        height = 263 * percent_max
+
+        surf = pygame.Surface((90, 263),pygame.SRCALPHA,32)
+        area = pygame.Rect(0,263-height,90,height)
+        surf.blit(texture["minimap_velocity_shader"],(0,263-height), area)
+        self.velocity_shader.value = surf
+
+    def add_to_gui(self, gui):
+        gui.add(self.container, self.position[0], self.position[1])

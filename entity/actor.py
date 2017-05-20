@@ -7,6 +7,7 @@ from math import pi
 # Class should be done 4/24/2017
 # Jk 4/25/2017
 class Entity:
+    destroyed=False
     drawable = None
     visible = True
     _position = 0, 0

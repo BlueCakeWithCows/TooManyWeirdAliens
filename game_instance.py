@@ -10,7 +10,7 @@ import collision
 from misc import GREEN
 from assets import music, value, texture, _systems_path
 from system_loader import load_system
-from my_gui import Box, InfoBlock, WeaponBar, HealthBar
+from my_gui import Box, InfoBlock, WeaponBar, HealthBar, MiniMap
 import weapon
 
 class Instance(Window):
@@ -19,12 +19,13 @@ class Instance(Window):
     sun = None
     earth_arrow = None
     ship = None
-
     def __init__(self):
         Window.__init__(self)
         mixer.music.load(music["song1"])
         mixer.music.play(-1)
+
         self.collision_list = []
+
 
         self.ship = SpaceShip(self)
         self.camera.target = self.ship
@@ -49,6 +50,9 @@ class Instance(Window):
         self.health_bar.update()
         self.add_gui(self.health_bar)
 
+        self.minimap = MiniMap(self.ship)
+        self.add_gui(self.minimap)
+
         self.update_gui()
 
         for p in system.system_dict.values():
@@ -71,6 +75,7 @@ class Instance(Window):
             raise ValueError("Cannot add null object to gamelist")
 
     def listen(self, deltaTime):
+        self.minimap.update()
         collision.update(self.collision_list)
         self.day += deltaTime
 

@@ -6,7 +6,7 @@ load_configs()
 import pygame
 import os
 import ctypes
-
+from pgu.timer import Speedometer
 ctypes.windll.user32.SetProcessDPIAware()
 
 pygame.mixer.pre_init(22050, 16, 2, 1024)
@@ -84,12 +84,14 @@ def draw(dt):
 
 last_time = pygame.time.get_ticks()
 accumulated_time = 0
-dtms= 64
+dtms= 32
 dt = dtms/1000
 
 frames=0
 frames_skipped= 0
 fps_timer = 0
+pgu_fps = Speedometer()
+pgu2_fps = Speedometer()
 while running:
     #delta milli seconds
     time= pygame.time.get_ticks()
@@ -97,26 +99,24 @@ while running:
     accumulated_time += dms
     last_time = time
 
-    fps_timer += dms
     #update every 16 ms
     if accumulated_time >= dtms:
         frames+=1
-        accumulated_time -= dtms
+        accumulated_time = accumulated_time - dtms
         update(dt)
-
+        pgu2_fps.tick()
+        fps_timer += dtms
         #skip frame if needed
         if accumulated_time <dtms:
-            pass
+            pgu_fps.tick()
             draw(dt)
         else:
             frames_skipped+=1
 
 
-    if fps_timer>1000:
-        fps_timer =- 1000
-        avg_fps = 31.25 - frames_skipped / frames * 31.25
-        frames_skipped = 0
-        frames = 0
-        print("avg fps = ", avg_fps)
+    if fps_timer>5000:
+        fps_timer -= 5000
+        print("Update fps = ", pgu2_fps.fps)
+        print("Graphics fps", pgu_fps.fps)
 
 pygame.quit()
