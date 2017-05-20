@@ -10,7 +10,7 @@ import collision
 from misc import GREEN
 from assets import music, value, texture, _systems_path
 from system_loader import load_system
-from my_gui import Box, InfoBlock, WeaponBar
+from my_gui import Box, InfoBlock, WeaponBar, HealthBar
 import weapon
 
 class Instance(Window):
@@ -44,6 +44,11 @@ class Instance(Window):
         self.weapon_bar.weapon_slot[1] = weapon.TripleBasicKineticWeapon()
         self.weapon_bar.select(0)
         self.weapon_bar.update()
+
+        self.health_bar = HealthBar(self.ship)
+        self.health_bar.update()
+        self.add_gui(self.health_bar)
+
         self.update_gui()
 
         for p in system.system_dict.values():

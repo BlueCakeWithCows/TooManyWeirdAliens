@@ -14,6 +14,7 @@ class Entity:
     _velocity_polar = 0, 0
     radius = None
     health = None
+    max_health= 999999
     arrow = None
     instance = None
     auto_handle_image_rotatation = True
@@ -65,6 +66,9 @@ class Entity:
 
     def damage(self, amount):
         self.health = self.health - amount
+
+        if self.max_health < self.max_health:
+            self.health = self.max_health
         if self.health < 1:
             self.on_health_below_zero_event()
 

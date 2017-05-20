@@ -84,7 +84,7 @@ def draw(dt):
 
 last_time = pygame.time.get_ticks()
 accumulated_time = 0
-dtms= 16
+dtms= 64
 dt = dtms/1000
 
 frames=0
@@ -114,7 +114,7 @@ while running:
 
     if fps_timer>1000:
         fps_timer =- 1000
-        avg_fps = 62.5 - frames_skipped / frames * 62.5
+        avg_fps = 31.25 - frames_skipped / frames * 31.25
         frames_skipped = 0
         frames = 0
         print("avg fps = ", avg_fps)

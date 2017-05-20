@@ -44,9 +44,14 @@ def _music(name, options):
 
 
 def _font(name, options):
-    font_name = options["name"]
-    size = convert(options["size"])
-    font[name]=pygame.font.SysFont(font_name, size)
+    if "url" in options:
+        path = get_path(_assets_path + options["url"])
+        size = convert(options["size"])
+        font[name] = pygame.font.Font(path, size)
+    elif "name" in options:
+        font_name = options["name"]
+        size = convert(options["size"])
+        font[name]=pygame.font.SysFont(font_name, size)
 
 # map the inputs to the function blocks
 _assets_switch = {"music": _music, "image": _image, "sound": _sound_effect, "font": _font}

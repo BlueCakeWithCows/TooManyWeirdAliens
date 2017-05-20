@@ -25,7 +25,10 @@ class SpaceShip(Entity):
         Entity.__init__(self, instance)
         self.create_drawable()
         self.position = position
-        self.health = value["ship.health"]
+        self.health = value["ship.health"] -1
+        self.max_health = value["ship.health"]
+        self.fuel = 100
+        self.max_fuel = 200
         self.base_image = texture["ship"]
         self.base_image_fire = texture["ship_fire"]
         self.deacceleration = value["ship.deacceleration"]
