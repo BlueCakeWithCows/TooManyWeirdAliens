@@ -5,12 +5,12 @@ from entity.ship import SpaceShip
 from pygame import mixer
 from entity.enemy import Goblin
 import pygame
-from math import pi
+from math import pi, cos, sin
 import collision
 from misc import GREEN
 from assets import music, value, texture, _systems_path
 from system_loader import load_system
-from my_gui import Box, InfoBlock, WeaponBar, HealthBar, MiniMap
+from my_gui import Box, InfoBlock, WeaponBar, HealthBar, MiniMap, ItemBar
 import weapon
 
 class Instance(Window):
@@ -32,10 +32,10 @@ class Instance(Window):
         self.camera.offset = (-value["init.half_width"], -value["init.half_height"])
         self.create(StarrySky(self))
 
-        system = load_system(_systems_path + "sol.sys")
+        self.system = system = load_system(_systems_path + "sol.sys")
         box =Box(system.system, self)
         box.update()
-        self.add_gui(box)
+        #self.add_gui(box)
         #None will be replaced with self after fully implemented.
         self.add_gui(InfoBlock(None))
         self.weapon_bar = WeaponBar(self.ship)
@@ -50,15 +50,20 @@ class Instance(Window):
         self.health_bar.update()
         self.add_gui(self.health_bar)
 
-        self.minimap = MiniMap(self.ship)
+        self.minimap = MiniMap(self.ship, self.system)
         self.add_gui(self.minimap)
+
+
+        self.item_bar = ItemBar(self.ship)
+        self.item_bar.update()
+        self.add_gui(self.item_bar)
 
         self.update_gui()
 
         for p in system.system_dict.values():
             self.create(p)
 
-        self.ship.position = 12000,0
+        self.ship.position = 59000*cos(22),59000*sin(22)
 
         # self.update_list.append(Enemy_Spawner.Spawner())
         self.create(self.ship)

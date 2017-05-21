@@ -1,7 +1,7 @@
 from pgu import gui as pgui
 import pygame
 from assets import font, texture
-from misc import WHITE, GREEN, LIGHT_GRAY
+from misc import WHITE, GREEN, LIGHT_GRAY,BLUE
 from entity.display import Arrow
 import datetime
 import copy
@@ -286,9 +286,11 @@ class HealthBar:
 
 class MiniMap():
 
-
-    def __init__(self, ship=None):
+    GLOBAL = 0
+    LOCAL = 1
+    def __init__(self, ship=None, system=None):
         self.ship = ship
+        self.system = system
         self.position = 1500, 705
         self.container = pgui.Container(width=300, height=100)  # any fixed value works
 
@@ -306,7 +308,10 @@ class MiniMap():
         blank_velocity_surface = pygame.Surface((90,263))
         self.velocity_shader = pgui.Image(blank_velocity_surface)
         self.container.add(self.velocity_shader, 7, 37)
+        self.mode = self.GLOBAL
 
+        self. map_surface = pgui.Image(pygame.Surface((320,320),pygame.SRCALPHA,32))
+        self.container.add(self.map_surface, 44,7)
         self.update()
 
     # Set proper icons and shit
@@ -319,6 +324,76 @@ class MiniMap():
         area = pygame.Rect(0,263-height,90,height)
         surf.blit(texture["minimap_velocity_shader"],(0,263-height), area)
         self.velocity_shader.value = surf
+
+        self.map_surface.value.fill((255,255,255,100))
+        if self.mode == self.GLOBAL:
+            for body in self.system.system_dict.values():
+                x = int(body.x / 400)+160
+                y = int(body.y / 400)+160
+                radius = int(body.radius / 188)
+                pygame.draw.circle(self.map_surface.value, GREEN, (x,y),radius)
+                if(body.name == "pluto"):
+                    print(x,y)
+                #self.map_surface.value
+                #self.map_surface.blit()
+            x = int(self.ship.x / 380) + 160
+            y = int(self.ship.y / 380) + 160
+            radius = int(4)
+            pygame.draw.circle(self.map_surface.value, BLUE, (x, y), radius)
+
+    def add_to_gui(self, gui):
+        gui.add(self.container, self.position[0], self.position[1])
+
+class ItemBar:
+
+
+    def __init__(self, ship = None):
+        self.ship = ship
+        self.container = pgui.Container(width=300, height=100)
+        self.position = 15,945
+        #List of 3 null slots
+        self.item_slot = {}
+
+        self.button_group = pgui.Group()
+        for i in range(4):
+            button = pgui.Radio(self.button_group, i, width=100, height=100)
+            button.style.width = 128
+            button.style.height= 128
+            button.focusable = False
+            self.container.add(button, i * 143, 0)
+            self.item_slot[i] = None
+            self.__setattr__("button%s" % i, button)
+
+        # def switch_weapon(value):
+        #     key = value.value
+        #     if self.ship is not None:
+        #         self.ship.weapon = self.weapon_slot[key]
+        #
+        # self.button_group.connect(pgui.CHANGE, switch_weapon, self.button_group)
+
+        self.update()
+
+    def select(self, key):
+     weapon_button = self.__getattribute__("button%s" % key)
+     self.button_group.value = weapon_button.value
+     weapon_button.click()
+
+    #Set proper icons and shit
+    def update(self):
+        for key in self.item_slot.keys():
+            weapon_button = self.__getattribute__("button%s" % key)
+            if self.item_slot.get(key) is None:
+                weapon_button.style.on = self.highlighted_icon(texture["weapon0_icon"])
+                weapon_button.style.off = texture["weapon0_icon"]
+            else:
+                weapon = self.item_slot.get(key)
+                weapon_button.style.on = self.highlighted_icon(weapon.icon)
+                weapon_button.style.off = weapon.icon
+
+    def highlighted_icon(self, my_tex):
+        new_tex= my_tex.copy()
+        new_tex.blit(texture["weapon_highlight"], (0,0))
+        return new_tex
 
     def add_to_gui(self, gui):
         gui.add(self.container, self.position[0], self.position[1])
