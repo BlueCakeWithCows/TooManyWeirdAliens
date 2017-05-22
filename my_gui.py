@@ -332,8 +332,6 @@ class MiniMap():
                 y = int(body.y / 400)+160
                 radius = int(body.radius / 188)
                 pygame.draw.circle(self.map_surface.value, GREEN, (x,y),radius)
-                if(body.name == "pluto"):
-                    print(x,y)
                 #self.map_surface.value
                 #self.map_surface.blit()
             x = int(self.ship.x / 380) + 160

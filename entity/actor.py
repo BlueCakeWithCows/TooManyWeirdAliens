@@ -1,8 +1,8 @@
-from misc import to_polar, to_rectangular, pythag_distance, GREEN, add_rectangular, scale_rectangular
+from misc import to_polar, to_rectangular, pythag_distance, GREEN, add_rectangular, scale_rectangular, RED
 from pygame import draw, Rect
 import pygame
 from math import pi
-
+from types import MethodType
 
 # Class should be done 4/24/2017
 # Jk 4/25/2017
@@ -203,6 +203,42 @@ class Drawable:
             x = self.position[0] - camera_offset[0]
             y = self.position[1] - camera_offset[1]
         screen.blit(self.image, (x, y))
+
+
+
+    def large(self):
+        def replace_draw(self, screen, camera_offset=(0, 0)):
+            if self.image is None:
+                return
+            if self.ignore_offset:
+                x = self.position[0]
+                y = self.position[1]
+            else:
+                x = self.position[0] - camera_offset[0]
+                y = self.position[1] - camera_offset[1]
+            camera_offset = camera_offset[0], camera_offset[1]
+
+            rect = self.image.get_rect(topleft=self.position)
+            screen_rect = screen.get_rect(topleft=camera_offset)
+            overlap = screen_rect.clip(rect)
+            overlap.move_ip(-camera_offset[0], -camera_offset[1])
+            #0 is to left
+            #> is to right
+            corner = overlap.topleft
+            area = Rect(0,0,0,0)
+            area.size = overlap.size
+            if corner[0] == 0:
+                area.x = -x
+            else:
+                area.x= 0
+            if corner[1] == 0:
+                area.y=-y
+            else:
+                area.y= 0
+
+            screen.blit(self.image, overlap, area)
+
+        self.draw = MethodType(replace_draw, self)
 
     @property
     def position(self):

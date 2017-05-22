@@ -1,5 +1,5 @@
 from window import Window
-from entity.planets import Earth, Sun, Planet
+from entity.planets import Sun, Planet
 from entity.display import Arrow, StarrySky
 from entity.ship import SpaceShip
 from pygame import mixer
@@ -63,7 +63,7 @@ class Instance(Window):
         for p in system.system_dict.values():
             self.create(p)
 
-        self.ship.position = 59000*cos(22),59000*sin(22)
+        self.ship.position = 12000*cos(0),0
 
         # self.update_list.append(Enemy_Spawner.Spawner())
         self.create(self.ship)

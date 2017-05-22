@@ -49,7 +49,7 @@ radius=3500
 orbit_distance=35000
 angle=7
 orbit_period=4380
-texture=
+texture=jupiter
 target=sol
 [io]
 radius=180
