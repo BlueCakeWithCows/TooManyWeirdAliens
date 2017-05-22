@@ -325,7 +325,7 @@ class MiniMap():
         surf.blit(texture["minimap_velocity_shader"],(0,263-height), area)
         self.velocity_shader.value = surf
 
-        self.map_surface.value.fill((255,255,255,100))
+        self.map_surface.value.fill((255,255,255,0))
         if self.mode == self.GLOBAL:
             for body in self.system.system_dict.values():
                 x = int(body.x / 400)+160

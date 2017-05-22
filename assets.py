@@ -3,6 +3,7 @@ import sys
 from configparser import ConfigParser
 
 import pygame
+from pgu import gui as pgui
 
 _config_path = "data/configs/"
 _assets_path = "data/assets/"
@@ -14,7 +15,7 @@ texture = {}
 sound = {}
 music = {}
 font = {}
-
+theme = None
 __screen = None
 
 def _image(name, options):
@@ -67,6 +68,9 @@ def load_assets(screen=None):
         for section in config.sections():
             _assets_switch[config.get(section, "type")](section, dict(config.items(section)))
         config.clear()
+
+    global theme
+    theme = pgui.Theme(get_path("data/assets/default/"))
 
     print(music)
     print(texture)

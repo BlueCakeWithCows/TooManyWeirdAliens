@@ -2,7 +2,7 @@ from entity.actor import Entity
 from misc import add_rectangular, sub_rectangular, scale_rectangular
 from pygame import Rect
 from pgu import text, gui as pgui
-from assets import value
+from assets import value, theme
 class Window:
     debug = False
     update_list = []
@@ -11,7 +11,7 @@ class Window:
     def __init__(self):
         self.camera = Camera(self, None)
 
-        self.gui = pgui.App()
+        self.gui = pgui.App(theme)
         self.gui_container = pgui.Container(width=value["init.virtual_width"], height=value["init.virtual_height"])
         self.gui.init(self.gui_container)
 
