@@ -9,10 +9,12 @@ import ctypes
 from pgu.timer import Speedometer
 ctypes.windll.user32.SetProcessDPIAware()
 
-pygame.mixer.pre_init(22050, 16, 2, 1024)
+pygame.mixer.pre_init(22050, 16, 16, 512)
+
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
 
 pygame.init()
+pygame.mixer.set_num_channels(32)
 
 RESIZABLE = True
 from pygame.locals import *

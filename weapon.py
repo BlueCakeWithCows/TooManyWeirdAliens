@@ -54,11 +54,11 @@ class BasicKineticWeapon(Weapon):
 
     def __init__(self):
         Weapon.__init__(self)
-        self.cooldown = 2
+        self.cooldown = .1
         self.icon = texture["weapon1_icon"]
         self.trigger_sound = sound["player_fire_sound"]
         self.automatic = True
-        self.projectile_template = projectile["player_basic"]
+        self.projectile_template = projectile["bullet"]
 
     def fire(self, launcher, target):
             if self.timer > 0:
@@ -105,7 +105,7 @@ class StraightLineProjectile(Entity):
     def create(self):
         self.drawable = copy.copy(self.drawable)
         self.image_rotation = self.rotation
-        #self.force_update_image_rotation()
+        self.force_update_image_rotation()
 
     test = True
     bullet_duration = 60
@@ -129,6 +129,15 @@ def create_bullet_templates():
     player_basic.bullet_duration = 5
     player_basic.image = texture["bottle_rocket"]
     projectile["player_basic"] = player_basic
+
+    bullet = StraightLineProjectile()
+    bullet.speed = 600
+    bullet.damage = 1
+    bullet.radius = 4
+    bullet.bullet_duration = 5
+    bullet.image = texture["bullet"]
+    projectile["bullet"] = bullet
+
     print("Projectiles: ", projectile)
 
 
