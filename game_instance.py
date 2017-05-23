@@ -63,7 +63,7 @@ class Instance(Window):
         for p in system.system_dict.values():
             self.create(p)
 
-        self.ship.position = 12000*cos(0),0
+        self.ship.position = 22000*cos(0),17000
 
         # self.update_list.append(Enemy_Spawner.Spawner())
         self.create(self.ship)
