@@ -3,24 +3,25 @@ missing module named pyimod03_importers - imported by c:\users\angna\appdata\loc
 missing module named __main__ - imported by pkg_resources
 missing module named multiprocessing.set_start_method - imported by multiprocessing, multiprocessing.spawn
 missing module named multiprocessing.get_start_method - imported by multiprocessing, multiprocessing.spawn
-missing module named multiprocessing.get_context - imported by multiprocessing, multiprocessing.pool, multiprocessing.managers, multiprocessing.sharedctypes
 missing module named multiprocessing.TimeoutError - imported by multiprocessing, multiprocessing.pool
-missing module named multiprocessing.AuthenticationError - imported by multiprocessing, multiprocessing.connection
+missing module named multiprocessing.get_context - imported by multiprocessing, multiprocessing.pool, multiprocessing.managers, multiprocessing.sharedctypes
 missing module named multiprocessing.BufferTooShort - imported by multiprocessing, multiprocessing.connection
+missing module named multiprocessing.AuthenticationError - imported by multiprocessing, multiprocessing.connection
 missing module named _sysconfigdata - imported by sysconfig
 missing module named 'com.sun' - imported by appdirs
 missing module named com - imported by appdirs
 missing module named __builtin__ - imported by pyparsing
 missing module named ordereddict - imported by pyparsing
 missing module named 'six.moves.urllib' - imported by 'six.moves.urllib'
-missing module named six.moves.filter - imported by six.moves, pkg_resources
 missing module named six.moves.map - imported by six.moves, pkg_resources
+missing module named six.moves.filter - imported by six.moves, pkg_resources
 runtime module named six.moves - imported by pkg_resources, 'six.moves.urllib'
 missing module named StringIO - imported by six, pgu.gui.theme
 missing module named resource - imported by posix, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
 missing module named posix - imported by os, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
 missing module named _posixsubprocess - imported by subprocess, multiprocessing.util, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
 missing module named 'org.python' - imported by pickle, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py, xml.sax
+missing module named ce - imported by os, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
 missing module named readline - imported by cmd, code, pdb, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
 excluded module named _frozen_importlib - imported by importlib, importlib.abc, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
 missing module named _frozen_importlib_external - imported by importlib._bootstrap, importlib, importlib.abc, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
@@ -31,9 +32,8 @@ missing module named 'java.lang' - imported by platform, C:\Users\angna\PycharmP
 missing module named vms_lib - imported by platform, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
 missing module named termios - imported by tty, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py, getpass
 missing module named grp - imported by shutil, tarfile, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
-missing module named pwd - imported by posixpath, shutil, tarfile, http.server, webbrowser, distutils.util, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py, netrc, getpass
-missing module named ce - imported by os, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
 missing module named _dummy_threading - imported by dummy_threading, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
+missing module named pwd - imported by posixpath, shutil, tarfile, http.server, webbrowser, distutils.util, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py, netrc, getpass
 missing module named org - imported by copy, C:\Users\angna\PycharmProjects\TestProjects\TooManyWeirdAliens\main.py
 missing module named ConfigParser - imported by pgu.gui.theme
 missing module named copy_reg - imported by cStringIO, pygame

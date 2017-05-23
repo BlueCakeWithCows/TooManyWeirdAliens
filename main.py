@@ -14,7 +14,7 @@ pygame.mixer.pre_init(22050, 16, 16, 512)
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
 
 pygame.init()
-pygame.mixer.set_num_channels(32)
+pygame.mixer.set_num_channels(64)
 
 RESIZABLE = True
 from pygame.locals import *

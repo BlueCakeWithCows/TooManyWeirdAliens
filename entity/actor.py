@@ -182,43 +182,55 @@ class Entity:
 
 
 class Drawable:
-    image = None
+    _image = None
     _position = 0, 0
+    _draw_position =0,0
+
     ignore_offset = False
     draw_from_center = True
 
     def __init__(self, image=None, position=(0, 0), gui=False, draw_from_center=True):
-        self.image = image
+        self._image = image
         self.center = draw_from_center
         self.ignore_offset = gui
         self._position = position
 
+
     def draw(self, screen, camera_offset=(0, 0)):
-        if self.image is None:
+        if self._image is None:
             return
         if self.ignore_offset:
-            x = self.position[0]
-            y = self.position[1]
+            x = self._draw_position[0]
+            y = self._draw_position[1]
         else:
-            x = self.position[0] - camera_offset[0]
-            y = self.position[1] - camera_offset[1]
-        screen.blit(self.image, (x, y))
+            x = self._draw_position[0] - camera_offset[0]
+            y = self._draw_position[1] - camera_offset[1]
+        screen.blit(self._image, (x, y))
 
 
+    @property
+    def image(self):
+        return self._image
+
+    @image.setter
+    def image(self,image):
+        self._image = image
+        self.update_draw_position()
 
     def large(self):
         def replace_draw(self, screen, camera_offset=(0, 0)):
             if self.image is None:
                 return
             if self.ignore_offset:
-                x = self.position[0]
-                y = self.position[1]
+                x = self._draw_position[0]
+                y = self._draw_position[1]
             else:
-                x = self.position[0] - camera_offset[0]
-                y = self.position[1] - camera_offset[1]
+                x = self._draw_position[0] - camera_offset[0]
+                y = self._draw_position[1] - camera_offset[1]
             camera_offset = camera_offset[0], camera_offset[1]
 
-            rect = self.image.get_rect(topleft=self.position)
+            rect = self.image.get_rect(topleft=self._draw_position)
+            rect.move_ip(0,0)
             screen_rect = screen.get_rect(topleft=camera_offset)
             overlap = screen_rect.clip(rect)
             overlap.move_ip(-camera_offset[0], -camera_offset[1])
@@ -252,9 +264,13 @@ class Drawable:
             self._position = (args[0], args[1])
         else:
             raise ValueError('Wrong typed passed to position setter. Expected tuple or x and y')
-        if self.draw_from_center and self.image is not None:
+        self.update_draw_position()
 
-            self._position = (self.x - self.image.get_width() / 2, self.y - self.image.get_height() / 2)
+    def update_draw_position(self):
+        if self.draw_from_center and self._image is not None:
+            self._draw_position = (self.x - self._image.get_width() / 2, self.y - self._image.get_height() / 2)
+        else:
+            self._draw_position = self.x, self.y
 
     @property
     def x(self):

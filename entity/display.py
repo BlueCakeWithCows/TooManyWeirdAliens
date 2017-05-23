@@ -25,7 +25,7 @@ class Display(Entity):
 
     def update(self, delta_time):
         self.update_text()
-        self.drawable.image = self.my_font.render(self, 1, self.color)
+        self.drawable._image = self.my_font.render(self, 1, self.color)
 
     def update_text(self):
         if self.get_text_function is not None:
@@ -119,7 +119,7 @@ class Arrow(Entity):
             image.blit(label, (10, 6))
         size = (int(64 * self.scale), int(32 * self.scale))
 
-        self.drawable.image = pygame.transform.rotate(pygame.transform.scale(image, size), angle * 180 / pi)
+        self.drawable._image = pygame.transform.rotate(pygame.transform.scale(image, size), angle * 180 / pi)
 
 
     def update(self, delta_time):

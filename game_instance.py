@@ -28,7 +28,7 @@ class Instance(Window):
 
 
         self.ship = SpaceShip(self)
-        self.camera.target = self.ship
+        self.camera.set_target(self.ship)
         self.camera.offset = (-value["init.half_width"], -value["init.half_height"])
         self.create(StarrySky(self))
 
@@ -74,7 +74,7 @@ class Instance(Window):
             for p in x:
                 self.create(p)
         elif x is not None:
-            self.update_list.append(x)
+            self.add_update_list.append(x)
             x.instance = self
         else:
             raise ValueError("Cannot add null object to gamelist")

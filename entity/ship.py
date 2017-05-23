@@ -53,6 +53,7 @@ class SpaceShip(Entity):
         self.calculate_new_velocity(delta_time)
         self.calculate_new_position(delta_time)
         self.redraw_image()
+        self.do_engine_audio()
         self.fire(delta_time)
 
     def get_key_inputs(self):
@@ -106,9 +107,19 @@ class SpaceShip(Entity):
         else:
             image = self.base_image
         self.drawable.image = pygame.transform.rotate(image, -180 / pi * self.direction)
-        self.drawable.image = self.drawable.image.convert_alpha()
+
 
     cooldown = 0
+
+
+    def do_engine_audio(self):
+        if self.k_up:
+            if self.channel is None:
+                self.channel = sound["engine"].play(-1)
+        else:
+            if(self.channel is not None):
+                self.channel.stop()
+                self.channel = None
 
     def fire(self, delta_time):
         if self.weapon is not None:
