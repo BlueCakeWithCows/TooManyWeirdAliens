@@ -1,17 +1,18 @@
-from window import Window
-from entity.planets import Sun, Planet
-from entity.display import Arrow, StarrySky
-from entity.ship import SpaceShip
-from pygame import mixer
-from entity.enemy import Goblin
+from math import cos
+
 import pygame
-from math import pi, cos, sin
+from pygame import mixer
+
 import collision
-from misc import GREEN
-from assets import music, value, texture, _systems_path
-from system_loader import load_system
-from my_gui import Box, InfoBlock, WeaponBar, HealthBar, MiniMap, ItemBar
+import entity.planets as planets
 import weapon
+from assets import music, value, _systems_path
+from entity.display import StarrySky
+from entity.ship import SpaceShip
+from my_gui import Box, InfoBlock, WeaponBar, HealthBar, MiniMap, ItemBar
+from system_loader import load_system
+from window import Window
+
 
 class Instance(Window):
     day = 0
@@ -62,6 +63,9 @@ class Instance(Window):
 
         for p in system.system_dict.values():
             self.create(p)
+
+        belt = planets.AsteroidBelt(system.get_planet("sol"), "data/systems/asteroid_belt.txt")
+        self.create(belt)
 
         self.ship.position = 22000*cos(0),17000
 

@@ -59,6 +59,7 @@ def update(dt):
 
 virtual_screen = virtual_screen.convert(screen)
 
+
 def draw(dt):
     virtual_screen.fill(BLACK)
     game_screen.draw(virtual_screen)
@@ -86,7 +87,7 @@ def draw(dt):
 
 last_time = pygame.time.get_ticks()
 accumulated_time = 0
-dtms= 32
+dtms= value["init.dt"]
 dt = dtms/1000
 
 frames=0

@@ -17,7 +17,7 @@ texture=venus
 target=sol
 [earth]
 radius=640
-orbit_distance=12500
+orbit_distance=15000
 angle=0
 orbit_period=365
 texture=earth
@@ -31,7 +31,7 @@ texture=moon
 target=earth
 [mars]
 radius=320
-orbit_distance=16000
+orbit_distance=22800
 angle=6
 orbit_period=687
 texture=

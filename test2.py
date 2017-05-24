@@ -1,6 +1,8 @@
-import pygame
-import os
 import ctypes
+import os
+
+import pygame
+
 ctypes.windll.user32.SetProcessDPIAware()
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
 pygame.init()
@@ -9,14 +11,14 @@ flags = NOFRAME| DOUBLEBUF
 #resolution = (value["init.window_width"], value["init.window_height"])
 screen = pygame.display.set_mode((0,0), flags)
 print(screen)
-from assets import load_assets, load_configs, _systems_path, get_path, texture
+from assets import load_assets, load_configs, texture
 load_configs()
 load_assets(screen)
 print("Passed Configs and Assets")
 from weapon import create_bullet_templates
 create_bullet_templates()
-
-from misc import GREEN, BLACK, WHITE
+from math import pow, pi
+from misc import BLACK, WHITE
 
 import math
 refvec = [1,0]
@@ -83,13 +85,33 @@ def adjust_list(origin, polygon):
         new_list.append(pop)
     return new_list
 
+def period(distance):
+     return 365 * pow(distance / 15000, 1.5)
+
+class MiniRoid():
+#Tp = (ap/ae)^3/2 * Te
+    def __init__(self, center_of_mass, index, polygon, orbital_period, distance, angle, rotation, rotation_period):
+        self.dict = {}
+        self.dict["c"] = center_of_mass
+        self.dict["i"] = index
+        self.dict["p"] = polygon
+        self.dict["o"] = orbital_period
+        self.dict["d"] = distance
+        self.dict["a"] = angle
+        self.dict["r"] = rotation
+        self.dict["ro"] = rotation_period
+
+
 width = 32
 height= 32
 row=50
+minD, maxD = 27000, 30000
+minRP, maxRP = 3, 30
 img = pygame.Surface((width*row, height*row),pygame.SRCALPHA, 32)
 
 import random
-import pygame.gfxdraw as gfx
+
+asters = []
 
 min = .09 * width*height
 rand = random.Random(2)
@@ -116,9 +138,20 @@ for x in range(row):
             curved_points = round_list(curved_points)
             area= get_area(curved_points)
 
-            #gfx.textured_polygon(img, curved_points,aster, 0,0)
+
         pygame.draw.polygon(img, WHITE, curved_points)
         polygons.append(curved_points)
+
+        origin = o_x / len(curved_points), o_y / (len(curved_points))
+        origin = round(origin[0]), round(origin[1])
+        distance = rand.randint(minD, maxD)
+
+        rotation = rand.randint(0,360)/ (180) * pi
+        rotation_period = rand.randint(minRP, maxRP)
+        orbital_period = period(distance)
+        angle = rand.randint(0,360)/ (180) * pi
+        roid = MiniRoid(origin, (x,y), curved_points,orbital_period, distance, angle, rotation, rotation_period)
+        asters.append(roid.dict)
 
 masked_result.blit(img, (0, 0), None, pygame.BLEND_RGBA_MULT)
 
@@ -126,4 +159,18 @@ for poly in polygons:
     pygame.draw.polygon(masked_result, BLACK, poly, 1)
 
 
-pygame.image.save(masked_result, "asteroid_test.png")
+pygame.image.save(masked_result, "data/assets/textures/asteroids.png")
+
+import json
+
+data = {}
+
+data["width"]=width*8
+data["height"]=height*8
+data["asteroids"]=asters
+
+json_data = json.dumps(data)
+print(json_data)
+
+with open('data/systems/asteroid_belt.txt', 'w') as outfile:
+    json.dump(data, outfile)
