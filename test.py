@@ -21,9 +21,8 @@ earth_pack = EarthHealPack(None, (32, 32), False)
 heal_pack = HealthPack(None, (-32, -32), False)
 print("Passed Powerup")
 
-from entity.planets import Earth, Sun
+from entity.planets import Sun
 sun = Sun(None)
-earth = Earth(None, sun)
 print("Passed Planets")
 
 from entity.enemy import Goblin, Bombarder, Hunter

@@ -283,7 +283,6 @@ class HealthBar:
     def add_to_gui(self, gui):
         gui.add(self.container, self.position[0], self.position[1])
 
-
 class MiniMap():
 
     GLOBAL = 0
